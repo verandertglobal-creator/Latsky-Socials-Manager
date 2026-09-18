@@ -1,866 +1,177 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Latsky Multimedia | Omni-Channel Publisher & AI Scaler</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              500: '#6366f1',
-              600: '#4f46e5',
-              900: '#0f172a',
-              950: '#090d16',
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <title>Social Video Publisher</title>
   <style>
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    
-    /* Scanner laser animation */
-    @keyframes scanline {
-      0% { top: 0%; opacity: 0.8; }
-      50% { opacity: 1; }
-      100% { top: 95%; opacity: 0.8; }
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
     }
-    .scanner-laser {
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, #22d3ee, #818cf8, #22d3ee, transparent);
-      box-shadow: 0 0 15px #818cf8, 0 0 8px #22d3ee;
-      animation: scanline 2s infinite ease-in-out;
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 2rem; display: flex; justify-content: center; }
+
+    .publisher-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
     }
+
+    h1 { font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
+
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-muted); }
+
+    input[type="text"], textarea, input[type="datetime-local"] {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    textarea { resize: vertical; height: 100px; }
+
+    .platform-selector {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    .platform-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg);
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .platform-option input { accent-color: var(--accent); }
+
+    .actions { display: flex; gap: 1rem; margin-top: 1.5rem; }
+    button {
+      flex: 1;
+      padding: 0.85rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-secondary:hover { background: var(--border); }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased">
+<body>
 
-  <!-- TOP NAVIGATION BAR -->
-  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 sm:px-8 py-3.5 flex justify-between items-center flex-wrap gap-3">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-        <i class="fa-solid fa-film text-white text-lg"></i>
-      </div>
-      <div>
-        <span class="text-base font-bold tracking-tight text-white block leading-none">LATSKY MULTIMEDIA</span>
-        <span class="text-[10px] text-indigo-400 font-semibold uppercase tracking-wider">Omni-Channel Studio Hub</span>
-      </div>
+<div class="publisher-card">
+  <h1>Publish Short Video</h1>
+  
+  <form id="publishForm">
+    <div class="form-group">
+      <label for="postTitle">Video Title / Caption</label>
+      <input type="text" id="postTitle" placeholder="Catchy title for your video..." required>
     </div>
 
-    <!-- Navigation Links -->
-    <nav class="hidden lg:flex items-center gap-1 text-xs font-semibold bg-slate-950/60 p-1 rounded-full border border-slate-800">
-      <button onclick="switchTab('upload')" id="nav-upload" class="nav-btn px-4 py-1.5 rounded-full text-white bg-indigo-600 transition">Publisher & AI Scaler</button>
-      <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn px-4 py-1.5 rounded-full text-slate-400 hover:text-white transition">Cross Analytics</button>
-      <button onclick="switchTab('portfolio')" id="nav-portfolio" class="nav-btn px-4 py-1.5 rounded-full text-slate-400 hover:text-white transition">Portfolio Vault</button>
-    </nav>
-
-    <!-- Header Actions & Scheduled Queue Button -->
-    <div class="flex items-center gap-3 flex-wrap">
-      <button onclick="toggleScheduledModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition flex items-center gap-2">
-        <i class="fa-regular fa-calendar-check text-indigo-400"></i>
-        <span>Scheduled Posts</span>
-        <span id="scheduled-badge" class="bg-indigo-600 text-white px-1.5 py-0.5 rounded-full text-[10px] font-bold">0</span>
-      </button>
-
-      <!-- Platform OAuth Status Pills -->
-      <div class="flex items-center gap-2">
-        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/30">
-          <i class="fa-brands fa-youtube"></i> <span class="hidden sm:inline">YouTube</span>
-        </div>
-        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-          <i class="fa-brands fa-tiktok"></i> <span class="hidden sm:inline">TikTok</span>
-        </div>
-        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-pink-500/10 text-pink-400 border border-pink-500/30">
-          <i class="fa-brands fa-instagram"></i> <span class="hidden sm:inline">Instagram</span>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN DASHBOARD -->
-  <main class="max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 flex-grow">
-
-    <!-- TAB SUB NAVIGATION -->
-    <div class="flex border-b border-slate-800 mb-8 overflow-x-auto no-scrollbar">
-      <button onclick="switchTab('upload')" id="tab-upload" class="main-tab-btn pb-3 px-4 text-sm font-semibold text-indigo-400 border-b-2 border-indigo-500 flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> AI Scaler & Publisher
-      </button>
-      <button onclick="switchTab('analytics')" id="tab-analytics" class="main-tab-btn pb-3 px-4 text-sm font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-chart-line"></i> Retention & Channel Analytics
-      </button>
-      <button onclick="switchTab('portfolio')" id="tab-portfolio" class="main-tab-btn pb-3 px-4 text-sm font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-photo-film"></i> Production Vault
-      </button>
+    <div class="form-group">
+      <label for="postDescription">Description / Hashtags</label>
+      <textarea id="postDescription" placeholder="Add descriptions, tags #shorts #reels..."></textarea>
     </div>
 
-    <!-- PUBLISHER SECTION -->
-    <div id="view-upload" class="space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="form-group">
+      <label for="videoFile">Upload Video</label>
+      <input type="file" id="videoFile" accept="video/*" required style="color: var(--text-muted);">
+    </div>
+
+    <div class="form-group">
+      <label>Target Platforms</label>
+      <div class="platform-selector">
+        <label class="platform-option">
+          <input type="checkbox" name="platform" value="youtube" checked>
+          <span>YouTube Shorts</span>
+        </label>
         
-        <!-- LEFT COLUMN: DRAG & DROP + Aspect Scaler (5 cols) -->
-        <div class="lg:col-span-5 space-y-4">
-          
-          <!-- Dropzone & Live Canvas -->
-          <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-4 space-y-4">
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Live Stage & Aspect Canvas</span>
-              <span id="aspect-label" class="text-[11px] font-semibold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">9:16 Vertical</span>
-            </div>
-
-            <!-- Canvas Stage Box with Drag & Drop Handlers -->
-            <div id="canvas-wrapper" class="w-full bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden relative min-h-[360px] p-2 transition-all">
-              
-              <input type="file" id="file-input" accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)">
-              
-              <!-- Empty State Drop Prompt -->
-              <div id="drop-prompt" onclick="document.getElementById('file-input').click()" 
-                   class="flex flex-col justify-center items-center py-12 px-4 border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl w-full cursor-pointer transition group text-center bg-slate-900/40">
-                <div class="w-14 h-14 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
-                  <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
-                </div>
-                <h3 class="text-sm font-bold text-white">Drop Media File or Click to Browse</h3>
-                <p class="text-xs text-slate-400 mt-1">Images (JPG, PNG, WebP) or Videos (MP4, MOV)</p>
-                <span class="mt-4 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow transition">Select Asset</span>
-              </div>
-
-              <!-- Interactive Media Frame -->
-              <div id="preview-stage" class="hidden relative overflow-hidden transition-all duration-300 rounded-lg shadow-2xl bg-black border border-slate-700 flex items-center justify-center"
-                   style="aspect-ratio: 9/16; height: 380px; width: auto; max-width: 100%;">
-                
-                <div id="ai-scanner-line" class="hidden scanner-laser z-20"></div>
-
-                <img id="media-img" class="hidden w-full h-full object-cover transition-all duration-200" src="" alt="Media Preview">
-                <video id="media-video" class="hidden w-full h-full object-cover transition-all duration-200" controls autoplay loop muted></video>
-
-                <!-- Platform Safe-Zone Guidelines Overlay -->
-                <div id="safe-zone-overlay" class="absolute inset-0 pointer-events-none border border-dashed border-red-500/50 hidden flex-col justify-between p-3 z-10">
-                  <div class="flex justify-between items-center text-[9px] font-mono text-red-400 bg-slate-950/85 px-2 py-0.5 rounded border border-red-500/30">
-                    <span>TOP SAFE MARGIN</span>
-                    <span>TITLE AREA</span>
-                  </div>
-                  <div class="flex justify-between items-end text-[9px] font-mono text-red-400">
-                    <div class="bg-slate-950/85 px-2 py-0.5 rounded border border-red-500/30 max-w-[65%]">
-                      CAPTION & AUDIO MARGIN
-                    </div>
-                    <div class="bg-slate-950/85 p-1 rounded border border-red-500/30 flex flex-col gap-1 items-center">
-                      <i class="fa-solid fa-heart"></i>
-                      <i class="fa-solid fa-comment"></i>
-                      <i class="fa-solid fa-share"></i>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="absolute top-2 right-2 flex gap-1 z-30">
-                  <button onclick="resetMedia()" type="button" class="bg-slate-900/90 hover:bg-slate-800 text-slate-300 px-2 py-1 rounded text-[11px] border border-slate-700 shadow backdrop-blur transition flex items-center gap-1">
-                    <i class="fa-solid fa-rotate-left"></i> Replace
-                  </button>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Aspect Ratio Switcher -->
-            <div class="space-y-2 pt-1">
-              <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Select Social Output Format</label>
-              <div class="grid grid-cols-3 gap-2">
-                <button onclick="setAspectRatio('9/16', '9:16 Vertical (Shorts/Reels/TikTok)', 'vertical')" id="btn-ratio-916" type="button" class="ratio-btn px-2.5 py-2 bg-indigo-600 border border-indigo-500 text-white rounded-xl text-xs font-semibold flex flex-col items-center gap-1 transition">
-                  <i class="fa-solid fa-mobile-screen-button text-sm"></i>
-                  <span>9:16 Vertical</span>
-                </button>
-
-                <button onclick="setAspectRatio('1/1', '1:1 Square (IG Feed/FB Post)', 'square')" id="btn-ratio-11" type="button" class="ratio-btn px-2.5 py-2 bg-slate-950 border border-slate-800 text-slate-400 hover:text-white rounded-xl text-xs font-semibold flex flex-col items-center gap-1 transition">
-                  <i class="fa-regular fa-square text-sm"></i>
-                  <span>1:1 Square</span>
-                </button>
-
-                <button onclick="setAspectRatio('16/9', '16:9 Landscape (YouTube Longform/FB)', 'wide')" id="btn-ratio-169" type="button" class="ratio-btn px-2.5 py-2 bg-slate-950 border border-slate-800 text-slate-400 hover:text-white rounded-xl text-xs font-semibold flex flex-col items-center gap-1 transition">
-                  <i class="fa-solid fa-tv text-sm"></i>
-                  <span>16:9 Longform</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Image Scale & Framing Options -->
-            <div class="pt-3 border-t border-slate-800 grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Scale Fit Mode</label>
-                <select id="select-fit-mode" onchange="updateFitMode()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                  <option value="cover">Crop to Fill (Cover)</option>
-                  <option value="contain">Fit Whole Asset (Contain)</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Platform Overlay</label>
-                <button onclick="toggleSafeZone()" id="btn-safe-zone" type="button" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5">
-                  <i class="fa-regular fa-eye"></i> Safe Zones
-                </button>
-              </div>
-            </div>
-
-            <!-- AI Vision Analysis Button -->
-            <div class="pt-2">
-              <button onclick="runAIVisionScan()" id="btn-ai-scan" type="button" class="w-full py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> AI Scan Asset for Titles, Captions & Tags
-              </button>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- RIGHT COLUMN: AI SUGGESTIONS & TARGET CHANNELS (7 cols) -->
-        <div class="lg:col-span-7 space-y-6">
-
-          <!-- AI Visual Scan Output Panel -->
-          <div id="ai-results-panel" class="bg-gradient-to-b from-indigo-950/40 via-slate-900 to-slate-900 rounded-2xl border border-indigo-500/30 p-5 space-y-4 relative overflow-hidden">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-              <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
-                  <i class="fa-solid fa-brain text-sm"></i>
-                </div>
-                <div>
-                  <h3 class="text-xs font-bold uppercase tracking-wider text-white">AI Media Inspector Results</h3>
-                  <p class="text-[10px] text-indigo-300">Visual composition & thematic content detection</p>
-                </div>
-              </div>
-              <span id="ai-status-badge" class="text-[10px] bg-slate-800 text-slate-400 border border-slate-700 px-2 py-0.5 rounded">Ready for Scan</span>
-            </div>
-
-            <div id="ai-scanning-state" class="hidden py-8 flex flex-col items-center justify-center text-center space-y-2">
-              <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400"></i>
-              <p class="text-xs font-medium text-slate-300">Analyzing focal subjects, color grade, and video hooks...</p>
-            </div>
-
-            <div id="ai-output-content" class="space-y-3">
-              <div>
-                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Recommended Video / Post Titles</label>
-                <div class="space-y-1.5" id="suggested-titles">
-                  <div onclick="applyTitle(this.innerText)" class="p-2 bg-slate-950/80 border border-slate-800 hover:border-indigo-500/50 rounded-lg text-xs text-slate-200 cursor-pointer transition flex justify-between items-center group">
-                    <span>3 Editing Secrets That Quadrupled My Video Retention</span>
-                    <i class="fa-solid fa-arrow-right text-indigo-400 opacity-0 group-hover:opacity-100 transition"></i>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Generated Caption & Hook</label>
-                <p id="suggested-caption" class="text-xs text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800 leading-relaxed">
-                  Inside the edit suite: breakdown of key visual hooks, color grading workflow, and retention pacing for commercial brand videos.
-                </p>
-              </div>
-
-              <div>
-                <label class="block text-[11px] font-semibold text-slate-400 mb-1">AI Smart Hashtags & SEO Tags</label>
-                <div id="suggested-tags" class="flex flex-wrap gap-1.5">
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md">#filmmaking</span>
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md">#videography</span>
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md">#editingtips</span>
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md">#capcut</span>
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md">#cinematography</span>
-                </div>
-              </div>
-
-              <div class="pt-2 flex justify-end">
-                <button onclick="applyAISuggestions()" type="button" class="px-3 py-1.5 bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1.5">
-                  <i class="fa-solid fa-check"></i> Populate Form Meta
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- FORM MATRIX & TARGET DESTINATIONS -->
-          <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-6 space-y-5">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-400">Post Configuration & Channel Matrix</h3>
-            
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Headline / Video Title</label>
-              <input id="input-title" type="text" value="3 Editing Secrets That Quadrupled My Video Retention" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500 transition">
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Caption & Description</label>
-              <textarea id="input-caption" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500 transition">Inside the edit suite: breakdown of key visual hooks, color grading workflow, and retention pacing for commercial brand videos.</textarea>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Tags (Comma Separated)</label>
-              <input id="input-tags" type="text" value="filmmaking, videography, editingtips, capcut, cinematography" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition">
-            </div>
-
-            <!-- Target Channels Selection -->
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-2">Publishing Destinations</label>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                
-                <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-red-500/50 transition">
-                  <div class="flex items-center gap-2.5 text-xs text-slate-200">
-                    <input type="checkbox" id="chk-yt-long" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
-                    <i class="fa-brands fa-youtube text-red-500 text-base"></i>
-                    <div>
-                      <span class="font-semibold block leading-tight">YouTube Longform</span>
-                      <span class="text-[10px] text-slate-400">16:9 Landscape Video</span>
-                    </div>
-                  </div>
-                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Ready</span>
-                </label>
-
-                <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-red-500/50 transition">
-                  <div class="flex items-center gap-2.5 text-xs text-slate-200">
-                    <input type="checkbox" id="chk-yt-shorts" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
-                    <i class="fa-brands fa-youtube text-red-500 text-base"></i>
-                    <div>
-                      <span class="font-semibold block leading-tight">YouTube Shorts</span>
-                      <span class="text-[10px] text-slate-400">9:16 Vertical Short</span>
-                    </div>
-                  </div>
-                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Ready</span>
-                </label>
-
-                <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-cyan-500/50 transition">
-                  <div class="flex items-center gap-2.5 text-xs text-slate-200">
-                    <input type="checkbox" id="chk-tt" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
-                    <i class="fa-brands fa-tiktok text-cyan-400 text-base"></i>
-                    <div>
-                      <span class="font-semibold block leading-tight">TikTok Feed</span>
-                      <span class="text-[10px] text-slate-400">9:16 Vertical Video</span>
-                    </div>
-                  </div>
-                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Ready</span>
-                </label>
-
-                <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-pink-500/50 transition">
-                  <div class="flex items-center gap-2.5 text-xs text-slate-200">
-                    <input type="checkbox" id="chk-ig" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
-                    <i class="fa-brands fa-instagram text-pink-500 text-base"></i>
-                    <div>
-                      <span class="font-semibold block leading-tight">Instagram Reels</span>
-                      <span class="text-[10px] text-slate-400">9:16 / 1:1 Feed Sync</span>
-                    </div>
-                  </div>
-                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Ready</span>
-                </label>
-
-              </div>
-            </div>
-
-            <!-- Schedule Date/Time Picker & Action Controls -->
-            <div class="space-y-4 pt-3 border-t border-slate-800">
-              <div class="flex flex-wrap items-center justify-between gap-3">
-                <label class="block text-xs font-semibold text-slate-300">
-                  <i class="fa-regular fa-clock text-indigo-400 mr-1"></i> Post Time & Date Selection
-                </label>
-                <div class="flex items-center gap-2">
-                  <input type="datetime-local" id="input-schedule-time" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 transition">
-                  <button type="button" onclick="setRecommendedTime()" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-indigo-300 text-[11px] font-semibold rounded-xl border border-slate-700 transition">
-                    Optimal Peak Slot (18:00)
-                  </button>
-                </div>
-              </div>
-
-              <div class="flex flex-wrap items-center justify-end gap-3 pt-2">
-                <button onclick="schedulePost()" type="button" class="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl border border-slate-700 transition flex items-center gap-2">
-                  <i class="fa-regular fa-calendar-plus text-indigo-400"></i> Schedule Post
-                </button>
-
-                <button onclick="triggerPublish()" type="button" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-indigo-500/25 flex items-center gap-2">
-                  <i class="fa-solid fa-paper-plane"></i> Publish Immediately
-                </button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 2: ANALYTICS -->
-    <div id="view-analytics" class="hidden space-y-6">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
-          <div class="text-xs text-slate-400 font-medium">YouTube Longform AVD</div>
-          <div class="text-3xl font-extrabold text-red-400 mt-1">8:24 <span class="text-xs font-normal text-slate-400">/ 12:10</span></div>
-          <div class="text-[11px] text-emerald-400 mt-1 flex items-center gap-1">
-            <i class="fa-solid fa-arrow-trend-up"></i> 68.9% Retention
-          </div>
-        </div>
-
-        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
-          <div class="text-xs text-slate-400 font-medium">Shorts & Reels Hook Rate</div>
-          <div class="text-3xl font-extrabold text-emerald-400 mt-1">76.4%</div>
-          <div class="text-[11px] text-slate-400 mt-1">3-Second Lock Benchmark</div>
-        </div>
-
-        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
-          <div class="text-xs text-slate-400 font-medium">Longform CTR</div>
-          <div class="text-3xl font-extrabold text-indigo-400 mt-1">11.8%</div>
-          <div class="text-[11px] text-indigo-400 mt-1">High Custom Thumbnail CTR</div>
-        </div>
-
-        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
-          <div class="text-xs text-slate-400 font-medium">Total Multi-Network Views</div>
-          <div class="text-3xl font-extrabold text-amber-400 mt-1">142.5K</div>
-          <div class="text-[11px] text-amber-500 mt-1">Across 4 Active Channels</div>
-        </div>
-      </div>
-
-      <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800">
-        <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-chart-line text-indigo-400"></i> Multi-Format Retention Overlay
-        </h3>
-        <div class="h-72 w-full">
-          <canvas id="retentionChart"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 3: PORTFOLIO -->
-    <div id="view-portfolio" class="hidden space-y-6">
-      <h3 class="text-base font-bold text-white">Latsky Multimedia Vault</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-4 space-y-2">
-          <div class="h-40 bg-slate-950 rounded-xl flex items-center justify-center text-red-400 font-bold text-xs border border-slate-800">
-            <i class="fa-brands fa-youtube text-2xl mr-2"></i> 16:9 YouTube Master
-          </div>
-          <h4 class="text-xs font-bold text-white">Corporate Brand Film (Full Cut)</h4>
-        </div>
-        <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-4 space-y-2">
-          <div class="h-40 bg-slate-950 rounded-xl flex items-center justify-center text-cyan-400 font-bold text-xs border border-slate-800">
-            <i class="fa-brands fa-tiktok text-2xl mr-2"></i> 9:16 TikTok Vertical Cut
-          </div>
-          <h4 class="text-xs font-bold text-white">Documentary BTS Hook Reel</h4>
-        </div>
-        <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-4 space-y-2">
-          <div class="h-40 bg-slate-950 rounded-xl flex items-center justify-center text-pink-400 font-bold text-xs border border-slate-800">
-            <i class="fa-brands fa-instagram text-2xl mr-2"></i> 1:1 Square Feed Edit
-          </div>
-          <h4 class="text-xs font-bold text-white">Social Promo Highlight</h4>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- SCHEDULED POSTS MODAL -->
-  <div id="scheduled-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl p-6 shadow-2xl space-y-5">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <div class="flex items-center gap-2">
-          <i class="fa-regular fa-calendar-check text-indigo-400 text-lg"></i>
-          <h3 class="text-sm font-bold text-white">Scheduled Publishing Queue</h3>
-        </div>
-        <button onclick="toggleScheduledModal()" class="text-slate-400 hover:text-white transition">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <!-- Queue Container -->
-      <div id="scheduled-list" class="space-y-3 max-h-[60vh] overflow-y-auto no-scrollbar pr-1">
-        <!-- Rendered items appear here -->
-      </div>
-
-      <div class="pt-2 flex justify-end">
-        <button onclick="toggleScheduledModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl transition">
-          Close Window
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <footer class="bg-slate-950 border-t border-slate-800 px-4 sm:px-8 py-5 text-center text-xs text-slate-500">
-    <p>© 2026 Latsky Multimedia. Auto-scaling, vision AI scanning & omni-platform publishing studio.</p>
-  </footer>
-
-  <script>
-    // SCHEDULED POSTS STATE MANAGEMENT
-    let scheduledQueue = [];
-
-    // NAVIGATION SWITCHER
-    function switchTab(tabName) {
-      ['upload', 'analytics', 'portfolio'].forEach(t => {
-        const view = document.getElementById(`view-${t}`);
-        const tabBtn = document.getElementById(`tab-${t}`);
-        const navBtn = document.getElementById(`nav-${t}`);
-
-        if (view) view.classList.add('hidden');
-        if (tabBtn) {
-          tabBtn.classList.remove('text-indigo-400', 'border-indigo-500');
-          tabBtn.classList.add('text-slate-400', 'border-transparent');
-        }
-        if (navBtn) {
-          navBtn.classList.remove('text-white', 'bg-indigo-600');
-          navBtn.classList.add('text-slate-400');
-        }
-      });
-
-      const activeView = document.getElementById(`view-${tabName}`);
-      const activeTabBtn = document.getElementById(`tab-${tabName}`);
-      const activeNavBtn = document.getElementById(`nav-${tabName}`);
-
-      if (activeView) activeView.classList.remove('hidden');
-      if (activeTabBtn) {
-        activeTabBtn.classList.add('text-indigo-400', 'border-indigo-500');
-        activeTabBtn.classList.remove('text-slate-400', 'border-transparent');
-      }
-      if (activeNavBtn) {
-        activeNavBtn.classList.add('text-white', 'bg-indigo-600');
-        activeNavBtn.classList.remove('text-slate-400');
-      }
-    }
-
-    // FILE DROP & SELECTION LOGIC
-    const canvasWrapper = document.getElementById('canvas-wrapper');
-    const fileInput = document.getElementById('file-input');
-    const dropPrompt = document.getElementById('drop-prompt');
-    const previewStage = document.getElementById('preview-stage');
-    const mediaImg = document.getElementById('media-img');
-    const mediaVideo = document.getElementById('media-video');
-
-    // Drag and Drop Event Listeners
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      canvasWrapper.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }, false);
-    });
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-      canvasWrapper.addEventListener(eventName, () => {
-        dropPrompt.classList.add('border-indigo-500', 'bg-indigo-500/10');
-      }, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      canvasWrapper.addEventListener(eventName, () => {
-        dropPrompt.classList.remove('border-indigo-500', 'bg-indigo-500/10');
-      }, false);
-    });
-
-    canvasWrapper.addEventListener('drop', (e) => {
-      const dt = e.dataTransfer;
-      const files = dt.files;
-      if (files && files.length > 0) {
-        processFile(files[0]);
-      }
-    });
-
-    function handleFileSelect(e) {
-      const files = e.target.files;
-      if (files.length) processFile(files[0]);
-    }
-
-    function processFile(file) {
-      const url = URL.createObjectURL(file);
-      dropPrompt.classList.add('hidden');
-      previewStage.classList.remove('hidden');
-
-      if (file.type.startsWith('image/')) {
-        mediaVideo.classList.add('hidden');
-        mediaVideo.pause();
-        mediaImg.src = url;
-        mediaImg.classList.remove('hidden');
-      } else if (file.type.startsWith('video/')) {
-        mediaImg.classList.add('hidden');
-        mediaVideo.src = url;
-        mediaVideo.classList.remove('hidden');
-      }
-
-      runAIVisionScan();
-    }
-
-    function resetMedia() {
-      mediaImg.src = '';
-      mediaVideo.src = '';
-      mediaImg.classList.add('hidden');
-      mediaVideo.classList.add('hidden');
-      previewStage.classList.add('hidden');
-      dropPrompt.classList.remove('hidden');
-      fileInput.value = '';
-    }
-
-    function setAspectRatio(ratio, labelText, presetKey) {
-      const stage = document.getElementById('preview-stage');
-      
-      if (ratio === '9/16') {
-        stage.style.aspectRatio = '9 / 16';
-        stage.style.height = '380px';
-        stage.style.width = 'auto';
-      } else if (ratio === '1/1') {
-        stage.style.aspectRatio = '1 / 1';
-        stage.style.height = '320px';
-        stage.style.width = 'auto';
-      } else if (ratio === '16/9') {
-        stage.style.aspectRatio = '16 / 9';
-        stage.style.width = '100%';
-        stage.style.height = 'auto';
-      }
-
-      document.getElementById('aspect-label').innerText = labelText;
-
-      ['916', '11', '169'].forEach(r => {
-        const btn = document.getElementById(`btn-ratio-${r}`);
-        if (r === ratio.replace('/', '')) {
-          btn.className = "ratio-btn px-2.5 py-2 bg-indigo-600 border border-indigo-500 text-white rounded-xl text-xs font-semibold flex flex-col items-center gap-1 transition shadow-lg shadow-indigo-500/20";
-        } else {
-          btn.className = "ratio-btn px-2.5 py-2 bg-slate-950 border border-slate-800 text-slate-400 hover:text-white rounded-xl text-xs font-semibold flex flex-col items-center gap-1 transition";
-        }
-      });
-    }
-
-    function updateFitMode() {
-      const mode = document.getElementById('select-fit-mode').value;
-      if (mode === 'cover') {
-        mediaImg.classList.remove('object-contain');
-        mediaImg.classList.add('object-cover');
-        mediaVideo.classList.remove('object-contain');
-        mediaVideo.classList.add('object-cover');
-      } else {
-        mediaImg.classList.remove('object-cover');
-        mediaImg.classList.add('object-contain');
-        mediaVideo.classList.remove('object-cover');
-        mediaVideo.classList.add('object-contain');
-      }
-    }
-
-    let safeZoneVisible = false;
-    function toggleSafeZone() {
-      safeZoneVisible = !safeZoneVisible;
-      const overlay = document.getElementById('safe-zone-overlay');
-      const btn = document.getElementById('btn-safe-zone');
-      if (safeZoneVisible) {
-        overlay.classList.remove('hidden');
-        overlay.classList.add('flex');
-        btn.classList.add('text-indigo-400', 'border-indigo-500/50');
-      } else {
-        overlay.classList.add('hidden');
-        overlay.classList.remove('flex');
-        btn.classList.remove('text-indigo-400', 'border-indigo-500/50');
-      }
-    }
-
-    function runAIVisionScan() {
-      const scanner = document.getElementById('ai-scanner-line');
-      const scanState = document.getElementById('ai-scanning-state');
-      const content = document.getElementById('ai-output-content');
-      const badge = document.getElementById('ai-status-badge');
-
-      scanner.classList.remove('hidden');
-      scanState.classList.remove('hidden');
-      content.classList.add('hidden');
-      badge.className = "text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded animate-pulse";
-      badge.innerText = "Analyzing Media...";
-
-      setTimeout(() => {
-        scanner.classList.add('hidden');
-        scanState.classList.add('hidden');
-        content.classList.remove('hidden');
+        <label class="platform-option">
+          <input type="checkbox" name="platform" value="tiktok">
+          <span>TikTok</span>
+        </label>
         
-        badge.className = "text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded";
-        badge.innerText = "Scan Complete";
+        <label class="platform-option">
+          <input type="checkbox" name="platform" value="instagram">
+          <span>Instagram Reels</span>
+        </label>
 
-        const sampleSets = [
-          {
-            titles: [
-              "3 Editing Secrets That Quadrupled My Video Retention",
-              "How to Film Cinematic Commercials on a Lean Budget",
-              "Behind the Edit: High-Impact Social Hook Strategy"
-            ],
-            caption: "Inside the edit suite: breakdown of key visual hooks, color grading workflow, and retention pacing for commercial brand films.",
-            tags: ["#filmmaking", "#videography", "#editingtips", "#capcut", "#cinematography", "#contentcreator"]
-          }
-        ];
+        <label class="platform-option">
+          <input type="checkbox" name="platform" value="facebook">
+          <span>Facebook Page / Reels</span>
+        </label>
+      </div>
+    </div>
 
-        const selected = sampleSets[0];
+    <div class="form-group">
+      <label for="scheduleTime">Schedule (Optional)</label>
+      <input type="datetime-local" id="scheduleTime">
+    </div>
 
-        const titlesContainer = document.getElementById('suggested-titles');
-        titlesContainer.innerHTML = selected.titles.map(t => `
-          <div onclick="applyTitle('${t}')" class="p-2 bg-slate-950/80 border border-slate-800 hover:border-indigo-500/50 rounded-lg text-xs text-slate-200 cursor-pointer transition flex justify-between items-center group">
-            <span>${t}</span>
-            <i class="fa-solid fa-arrow-right text-indigo-400 opacity-0 group-hover:opacity-100 transition"></i>
-          </div>
-        `).join('');
+    <div class="actions">
+      <button type="submit" class="btn-primary">Publish Now</button>
+      <button type="button" id="scheduleBtn" class="btn-secondary">Queue Post</button>
+    </div>
+  </form>
+</div>
 
-        document.getElementById('suggested-caption').innerText = selected.caption;
-        document.getElementById('suggested-tags').innerHTML = selected.tags.map(tag => `
-          <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md">${tag}</span>
-        `).join('');
+<script>
+  const form = document.getElementById('publishForm');
 
-      }, 1600);
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const selectedPlatforms = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(cb => cb.value);
+
+    if (selectedPlatforms.length === 0) {
+      alert('Please select at least one platform.');
+      return;
     }
 
-    function applyTitle(titleText) {
-      document.getElementById('input-title').value = titleText;
-    }
-
-    function applyAISuggestions() {
-      const captionText = document.getElementById('suggested-caption').innerText;
-      const tagElements = document.querySelectorAll('#suggested-tags span');
-      const tagList = Array.from(tagElements).map(el => el.innerText.replace('#', '')).join(', ');
-
-      document.getElementById('input-caption').value = captionText;
-      document.getElementById('input-tags').value = tagList;
-      alert("AI suggestions applied to publishing form!");
-    }
-
-    function setRecommendedTime() {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(18, 0, 0, 0);
-      
-      const localIso = new Date(tomorrow.getTime() - (tomorrow.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-      document.getElementById('input-schedule-time').value = localIso;
-    }
-
-    function getSelectedPlatforms() {
-      const selected = [];
-      if (document.getElementById('chk-yt-long').checked) selected.push('YouTube Longform');
-      if (document.getElementById('chk-yt-shorts').checked) selected.push('YouTube Shorts');
-      if (document.getElementById('chk-tt').checked) selected.push('TikTok');
-      if (document.getElementById('chk-ig').checked) selected.push('Instagram Reels');
-      return selected;
-    }
-
-    function schedulePost() {
-      const title = document.getElementById('input-title').value.trim();
-      const timeVal = document.getElementById('input-schedule-time').value;
-      const platforms = getSelectedPlatforms();
-
-      if (!title) {
-        alert("Please provide a title for the post.");
-        return;
-      }
-      if (!timeVal) {
-        alert("Please select a date and time to schedule your post.");
-        return;
-      }
-      if (!platforms.length) {
-        alert("Please select at least one target platform.");
-        return;
-      }
-
-      const formattedTime = new Date(timeVal).toLocaleString('en-US', {
-        dateStyle: 'medium',
-        timeStyle: 'short'
-      });
-
-      const newPost = {
-        id: Date.now(),
-        title: title,
-        time: formattedTime,
-        platforms: platforms
-      };
-
-      scheduledQueue.push(newPost);
-      updateScheduledQueueUI();
-      alert(`Post scheduled successfully for ${formattedTime}!`);
-    }
-
-    function cancelPost(id) {
-      scheduledQueue = scheduledQueue.filter(post => post.id !== id);
-      updateScheduledQueueUI();
-    }
-
-    function updateScheduledQueueUI() {
-      document.getElementById('scheduled-badge').innerText = scheduledQueue.length;
-      const container = document.getElementById('scheduled-list');
-
-      if (!scheduledQueue.length) {
-        container.innerHTML = `
-          <div class="py-8 text-center text-slate-500 text-xs">
-            <i class="fa-regular fa-calendar-xmark text-2xl mb-2 block text-slate-600"></i>
-            No posts currently scheduled in the queue.
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = scheduledQueue.map(item => `
-        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between gap-3">
-          <div class="space-y-1">
-            <h4 class="text-xs font-bold text-white line-clamp-1">${item.title}</h4>
-            <div class="flex items-center gap-2 text-[10px] text-slate-400">
-              <span class="text-indigo-400 font-medium"><i class="fa-regular fa-clock"></i> ${item.time}</span>
-              <span>•</span>
-              <span class="text-slate-300">${item.platforms.join(', ')}</span>
-            </div>
-          </div>
-          <button onclick="cancelPost(${item.id})" class="px-2.5 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[11px] font-semibold rounded-lg border border-red-500/20 transition flex items-center gap-1 shrink-0">
-            <i class="fa-solid fa-trash-can"></i> Cancel
-          </button>
-        </div>
-      `).join('');
-    }
-
-    function toggleScheduledModal() {
-      const modal = document.getElementById('scheduled-modal');
-      modal.classList.toggle('hidden');
-    }
-
-    function triggerPublish() {
-      const selected = getSelectedPlatforms();
-      if (!selected.length) {
-        alert("Please select at least one channel destination.");
-        return;
-      }
-      alert(`Dispatching master asset to selected channels:\n- ${selected.join('\n- ')}`);
-    }
-
-    // CHART.JS SETUP
-    window.onload = function() {
-      setRecommendedTime();
-      updateScheduledQueueUI();
-
-      const ctx = document.getElementById('retentionChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['0m', '1m', '3m', '5m', '8m', '10m', '12m'],
-          datasets: [
-            {
-              label: 'YouTube Longform (%)',
-              data: [100, 88, 79, 73, 68, 64, 59],
-              borderColor: '#ef4444',
-              backgroundColor: 'rgba(239, 68, 68, 0.05)',
-              fill: true,
-              tension: 0.35,
-              borderWidth: 2
-            },
-            {
-              label: 'TikTok Shorts (%)',
-              data: [100, 76, 60, 42, 25, 10, 5],
-              borderColor: '#22d3ee',
-              backgroundColor: 'rgba(34, 211, 238, 0.05)',
-              fill: true,
-              tension: 0.35,
-              borderWidth: 2
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: true, labels: { color: '#94a3b8' } } },
-          scales: {
-            x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } },
-            y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(51, 65, 85, 0.3)' }, min: 0, max: 100 }
-          }
-        }
-      });
+    const payload = {
+      title: document.getElementById('postTitle').value,
+      description: document.getElementById('postDescription').value,
+      platforms: selectedPlatforms,
+      scheduleTime: document.getElementById('scheduleTime').value || null,
+      timestamp: new Date().toISOString()
     };
-  </script>
+
+    console.log('Dispatching payload to Webhook/API:', payload);
+    alert('Payload submitted! Check browser console (F12) to inspect data output.');
+    
+    // Example endpoint delivery:
+    // fetch('YOUR_WEBHOOK_OR_BACKEND_URL', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(payload)
+    // });
+  });
+</script>
+
 </body>
 </html>
