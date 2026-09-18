@@ -28,11 +28,15 @@
       }
     }
   </script>
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased">
 
   <!-- TOP NAVIGATION BAR -->
-  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-8 py-3.5 flex justify-between items-center">
+  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-8 py-3.5 flex justify-between items-center flex-wrap gap-3">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/20">
         <i class="fa-solid fa-film text-white text-lg"></i>
@@ -44,7 +48,7 @@
     </div>
 
     <!-- Navigation Links -->
-    <nav class="hidden md:flex items-center gap-1 text-xs font-semibold bg-slate-950/60 p-1 rounded-full border border-slate-800">
+    <nav class="hidden lg:flex items-center gap-1 text-xs font-semibold bg-slate-950/60 p-1 rounded-full border border-slate-800">
       <button onclick="switchTab('upload')" id="nav-upload" class="nav-btn px-4 py-1.5 rounded-full text-white bg-indigo-600 transition">Publisher</button>
       <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn px-4 py-1.5 rounded-full text-slate-400 hover:text-white transition">Deep Analytics</button>
       <button onclick="switchTab('ai-hints')" id="nav-ai-hints" class="nav-btn px-4 py-1.5 rounded-full text-slate-400 hover:text-white transition">AI Insights</button>
@@ -52,102 +56,108 @@
     </nav>
 
     <!-- OAuth Connection Status Pills -->
-    <div class="flex items-center gap-2">
-      <button id="btn-yt-auth" onclick="toggleAuth('yt')" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="btn-yt-auth" onclick="toggleAuth('yt')" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition">
         <i class="fa-brands fa-youtube text-red-500"></i>
-        <span id="yt-auth-text" class="hidden sm:inline">YouTube: Connected (@LatskyMedia)</span>
+        <span id="yt-auth-text" class="hidden sm:inline">YouTube</span>
       </button>
 
-      <button id="btn-tt-auth" onclick="toggleAuth('tt')" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition">
+      <button id="btn-tt-auth" onclick="toggleAuth('tt')" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition">
         <i class="fa-brands fa-tiktok text-cyan-400"></i>
-        <span id="tt-auth-text" class="hidden sm:inline">TikTok: Connected (@JohannLatsky)</span>
+        <span id="tt-auth-text" class="hidden sm:inline">TikTok</span>
+      </button>
+
+      <button id="btn-ig-auth" onclick="toggleAuth('ig')" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-pink-500/10 text-pink-400 border border-pink-500/30 hover:bg-pink-500/20 transition">
+        <i class="fa-brands fa-instagram text-pink-500"></i>
+        <span id="ig-auth-text" class="hidden sm:inline">Instagram</span>
+      </button>
+
+      <button id="btn-fb-auth" onclick="toggleAuth('fb')" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30 hover:bg-blue-500/20 transition">
+        <i class="fa-brands fa-facebook text-blue-500"></i>
+        <span id="fb-auth-text" class="hidden sm:inline">Facebook</span>
       </button>
     </div>
   </header>
 
-  <!-- MAIN HERO STATEMENT & HUB HEADER -->
+  <!-- HERO STATEMENT & PLATFORM API STATUS -->
   <section class="bg-gradient-to-b from-slate-900 via-slate-900/50 to-slate-950 border-b border-slate-800 px-4 sm:px-8 py-8">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-2">
-          <i class="fa-solid fa-circle text-[8px] text-emerald-400 animate-pulse"></i> Live Multi-Platform Synchronization
+          <i class="fa-solid fa-circle text-[8px] text-emerald-400 animate-pulse"></i> 4-Platform Omni Synchronization Active
         </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">End-to-End Content Publishing & Deep Insights</h1>
-        <p class="text-xs sm:text-sm text-slate-400 mt-1">Cross-post directly to YouTube Shorts & TikTok with unified frame-by-frame retention analytics.</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Multi-Platform Publishing & Retention Engine</h1>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1">Cross-post directly to YouTube Shorts, TikTok, Instagram Reels, and Facebook Pages.</p>
       </div>
 
-      <!-- Quick Platform Sync Status -->
-      <div class="flex items-center gap-4 bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-xs text-slate-300">
-        <div class="flex items-center gap-2">
-          <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
-          <span>YouTube API v3</span>
-        </div>
-        <div class="w-px h-4 bg-slate-800"></div>
-        <div class="flex items-center gap-2">
-          <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
-          <span>TikTok Posting API</span>
-        </div>
+      <!-- Quick API Connection Matrix -->
+      <div class="flex items-center gap-3 bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-300 flex-wrap">
+        <div class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-emerald-400"></div><span>YouTube v3</span></div>
+        <div class="w-px h-3 bg-slate-800"></div>
+        <div class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-emerald-400"></div><span>TikTok API</span></div>
+        <div class="w-px h-3 bg-slate-800"></div>
+        <div class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-emerald-400"></div><span>IG Graph</span></div>
+        <div class="w-px h-3 bg-slate-800"></div>
+        <div class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-emerald-400"></div><span>Meta Graph</span></div>
       </div>
     </div>
   </section>
 
-  <!-- MAIN INTERACTIVE DASHBOARD CONTAINER -->
+  <!-- MAIN DASHBOARD -->
   <main class="max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 flex-grow">
 
-    <!-- SUB-NAVIGATION TABS (Mobile / Desktop Sync) -->
+    <!-- SUB-NAVIGATION TABS -->
     <div class="flex border-b border-slate-800 mb-8 overflow-x-auto no-scrollbar">
       <button onclick="switchTab('upload')" id="tab-upload" class="main-tab-btn pb-3 px-4 text-sm font-semibold text-indigo-400 border-b-2 border-indigo-500 flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-cloud-arrow-up"></i> Cross-Publisher & Scheduler
+        <i class="fa-solid fa-cloud-arrow-up"></i> Cross-Publisher
       </button>
       <button onclick="switchTab('analytics')" id="tab-analytics" class="main-tab-btn pb-3 px-4 text-sm font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-chart-line"></i> Native Social Insights & Retention
+        <i class="fa-solid fa-chart-line"></i> Cross-Platform Retention
       </button>
       <button onclick="switchTab('ai-hints')" id="tab-ai-hints" class="main-tab-btn pb-3 px-4 text-sm font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap">
         <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> AI Optimization Engine
       </button>
       <button onclick="switchTab('portfolio')" id="tab-portfolio" class="main-tab-btn pb-3 px-4 text-sm font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-photo-film"></i> Production Portfolio & Vault
+        <i class="fa-solid fa-photo-film"></i> Portfolio Vault
       </button>
     </div>
 
-    <!-- ================================================================= -->
-    <!-- TAB 1: CROSS-PUBLISHER & MULTI-ACCOUNT UPLOADER -->
-    <!-- ================================================================= -->
+    <!-- TAB 1: CROSS-PUBLISHER WITH INSTA & FB -->
     <div id="view-upload" class="space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- File Drag & Drop Dropzone -->
+        <!-- File Dropzone -->
         <div class="lg:col-span-5 bg-slate-900/60 border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-2xl p-8 text-center flex flex-col justify-center items-center transition cursor-pointer group">
           <div class="w-16 h-16 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-4 group-hover:scale-110 transition">
             <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
           </div>
           <h3 class="text-base font-bold text-white">Upload Master Asset</h3>
           <p class="text-xs text-slate-400 mt-1">Drag and drop 9:16 vertical video (MP4, MOV)</p>
-          <p class="text-[10px] text-slate-500 mt-2">Max resolution 4K 60fps • Auto-transcoded for TikTok & Shorts</p>
-          <button class="mt-5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-lg transition">Select Master Video File</button>
+          <p class="text-[10px] text-slate-500 mt-2">Auto-formatted for Shorts, TikTok, IG Reels & FB Reels</p>
+          <button class="mt-5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-lg transition">Select Video File</button>
         </div>
 
-        <!-- Metadata & OAuth Publishing Panel -->
+        <!-- Target Destination Selector -->
         <div class="lg:col-span-7 bg-slate-900/80 rounded-2xl border border-slate-800 p-6 space-y-5">
-          <h3 class="text-sm font-bold text-white uppercase tracking-wider text-indigo-400">Target Metadata & Platform Selector</h3>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-indigo-400">Primary Post Configuration</h3>
           
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Primary Video Title</label>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Video Title / Primary Caption</label>
             <input type="text" value="3 Editing Secrets That Quadrupled My Client Video Retention" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500 transition">
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Description & Keyword Hashtags</label>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Caption & Hashtags</label>
             <textarea rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500 transition">Behind the scenes look at editing retention hooks for brand films. #filmmaking #videography #editingtips #capcut</textarea>
           </div>
 
-          <!-- Direct Account Destination Checkboxes -->
+          <!-- 4-Platform OAuth Selection -->
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-2">Publishing Destinations (OAuth Connected)</label>
+            <label class="block text-xs font-semibold text-slate-300 mb-2">Publishing Destinations</label>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-red-500/50 transition">
                 <div class="flex items-center gap-2.5 text-xs text-slate-200">
-                  <input type="checkbox" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
+                  <input type="checkbox" id="chk-yt" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
                   <i class="fa-brands fa-youtube text-red-500 text-base"></i>
                   <span>YouTube Shorts</span>
                 </div>
@@ -156,67 +166,83 @@
 
               <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-cyan-500/50 transition">
                 <div class="flex items-center gap-2.5 text-xs text-slate-200">
-                  <input type="checkbox" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
+                  <input type="checkbox" id="chk-tt" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
                   <i class="fa-brands fa-tiktok text-cyan-400 text-base"></i>
                   <span>TikTok Video</span>
+                </div>
+                <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Ready</span>
+              </label>
+
+              <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-pink-500/50 transition">
+                <div class="flex items-center gap-2.5 text-xs text-slate-200">
+                  <input type="checkbox" id="chk-ig" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
+                  <i class="fa-brands fa-instagram text-pink-500 text-base"></i>
+                  <span>Instagram Reels</span>
+                </div>
+                <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Ready</span>
+              </label>
+
+              <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-blue-500/50 transition">
+                <div class="flex items-center gap-2.5 text-xs text-slate-200">
+                  <input type="checkbox" id="chk-fb" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
+                  <i class="fa-brands fa-facebook text-blue-500 text-base"></i>
+                  <span>Facebook Reels</span>
                 </div>
                 <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Ready</span>
               </label>
             </div>
           </div>
 
-          <!-- Scheduling Options -->
+          <!-- Schedule & Trigger -->
           <div class="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-slate-800">
             <div class="flex items-center gap-2 text-xs text-slate-400">
               <i class="fa-regular fa-clock text-indigo-400"></i>
-              <span>Schedule: <strong class="text-white">Optimal Audience Window (18:00 SAST)</strong></span>
+              <span>Schedule: <strong class="text-white">Peak Engagement Window (18:00 SAST)</strong></span>
             </div>
 
             <button onclick="triggerUpload()" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-indigo-500/25 flex items-center gap-2">
-              <i class="fa-solid fa-paper-plane"></i> Direct Upload & Publish Now
+              <i class="fa-solid fa-paper-plane"></i> Sync & Publish Across All 4
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ================================================================= -->
-    <!-- TAB 2: DEEP RETENTION ANALYTICS (NATIVE PLATFORM REPLACEMENT) -->
-    <!-- ================================================================= -->
+    <!-- TAB 2: ANALYTICS (WITH INSTA & FB DATASETS) -->
     <div id="view-analytics" class="hidden space-y-6">
       
-      <!-- Native KPI Overview Cards -->
+      <!-- Native KPI Cards -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
           <div class="text-xs text-slate-400 font-medium">3-Second Hook Retention</div>
-          <div class="text-3xl font-extrabold text-emerald-400 mt-1">71.4%</div>
+          <div class="text-3xl font-extrabold text-emerald-400 mt-1">74.2%</div>
           <div class="text-[11px] text-emerald-500 mt-1 flex items-center gap-1">
-            <i class="fa-solid fa-arrow-trend-up"></i> +8.2% vs Channel Avg
+            <i class="fa-solid fa-arrow-trend-up"></i> +11.2% Across Meta & TikTok
           </div>
         </div>
 
         <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
           <div class="text-xs text-slate-400 font-medium">Average View Duration (AVD)</div>
-          <div class="text-3xl font-extrabold text-white mt-1">0:42 <span class="text-xs font-normal text-slate-400">/ 0:58</span></div>
-          <div class="text-[11px] text-slate-400 mt-1">72.4% Full Completion Rate</div>
+          <div class="text-3xl font-extrabold text-white mt-1">0:45 <span class="text-xs font-normal text-slate-400">/ 0:58</span></div>
+          <div class="text-[11px] text-slate-400 mt-1">77.5% Full Completion Rate</div>
         </div>
 
         <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
-          <div class="text-xs text-slate-400 font-medium">Impression CTR</div>
-          <div class="text-3xl font-extrabold text-indigo-400 mt-1">9.8%</div>
+          <div class="text-xs text-slate-400 font-medium">Meta & YouTube CTR</div>
+          <div class="text-3xl font-extrabold text-indigo-400 mt-1">10.4%</div>
           <div class="text-[11px] text-indigo-400 mt-1 flex items-center gap-1">
-            <i class="fa-solid fa-magnifying-glass"></i> Top search result placement
+            <i class="fa-solid fa-chart-line"></i> Strong visual hook response
           </div>
         </div>
 
         <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
-          <div class="text-xs text-slate-400 font-medium">Engagement Health Score</div>
-          <div class="text-3xl font-extrabold text-amber-400 mt-1">94 <span class="text-xs text-slate-400 font-normal">/ 100</span></div>
-          <div class="text-[11px] text-amber-500 mt-1">Top 5% category performance</div>
+          <div class="text-xs text-slate-400 font-medium">Omni Engagement Score</div>
+          <div class="text-3xl font-extrabold text-amber-400 mt-1">96 <span class="text-xs text-slate-400 font-normal">/ 100</span></div>
+          <div class="text-[11px] text-amber-500 mt-1">Top 3% multi-network benchmark</div>
         </div>
       </div>
 
-      <!-- Main Retention Overlay & Traffic Split -->
+      <!-- Main Chart & Traffic Sources -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Frame-by-Frame Retention Curve (Chart.js) -->
@@ -224,13 +250,15 @@
           <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
             <div>
               <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                <i class="fa-solid fa-timeline text-indigo-400"></i> Frame-by-Frame Retention Curve
+                <i class="fa-solid fa-timeline text-indigo-400"></i> Multi-Network Retention Curves
               </h3>
-              <p class="text-xs text-slate-400">Overlaying YouTube Shorts vs. TikTok drop-off points</p>
+              <p class="text-xs text-slate-400">Overlaying TikTok, YouTube Shorts, IG Reels, and FB Reels</p>
             </div>
-            <div class="flex items-center gap-2 text-xs">
+            <div class="flex items-center gap-3 text-xs flex-wrap">
               <span class="flex items-center gap-1 text-cyan-400"><i class="fa-solid fa-circle text-[8px]"></i> TikTok</span>
-              <span class="flex items-center gap-1 text-red-400"><i class="fa-solid fa-circle text-[8px]"></i> YouTube Shorts</span>
+              <span class="flex items-center gap-1 text-pink-400"><i class="fa-solid fa-circle text-[8px]"></i> IG Reels</span>
+              <span class="flex items-center gap-1 text-red-400"><i class="fa-solid fa-circle text-[8px]"></i> YT Shorts</span>
+              <span class="flex items-center gap-1 text-blue-400"><i class="fa-solid fa-circle text-[8px]"></i> FB Reels</span>
             </div>
           </div>
           <div class="h-72 w-full">
@@ -238,107 +266,113 @@
           </div>
         </div>
 
-        <!-- Traffic Breakdown & High-Intent Signals -->
+        <!-- 4-Platform Breakdown -->
         <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-6">
           <div>
-            <h3 class="text-sm font-bold text-white mb-4">Traffic Source Breakdown</h3>
-            <div class="space-y-4">
+            <h3 class="text-sm font-bold text-white mb-4">Network Audience Share</h3>
+            <div class="space-y-3.5">
               <div>
                 <div class="flex justify-between text-xs mb-1">
-                  <span class="text-slate-300">TikTok For You Page (FYP)</span>
-                  <span class="font-bold text-cyan-400">62%</span>
+                  <span class="text-slate-300">TikTok FYP</span>
+                  <span class="font-bold text-cyan-400">42%</span>
                 </div>
                 <div class="w-full bg-slate-950 rounded-full h-2 border border-slate-800">
-                  <div class="bg-cyan-400 h-2 rounded-full" style="width: 62%"></div>
+                  <div class="bg-cyan-400 h-2 rounded-full" style="width: 42%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-slate-300">Instagram Reels Feed</span>
+                  <span class="font-bold text-pink-400">31%</span>
+                </div>
+                <div class="w-full bg-slate-950 rounded-full h-2 border border-slate-800">
+                  <div class="bg-pink-400 h-2 rounded-full" style="width: 31%"></div>
                 </div>
               </div>
 
               <div>
                 <div class="flex justify-between text-xs mb-1">
                   <span class="text-slate-300">YouTube Shorts Feed</span>
-                  <span class="font-bold text-red-400">26%</span>
+                  <span class="font-bold text-red-400">18%</span>
                 </div>
                 <div class="w-full bg-slate-950 rounded-full h-2 border border-slate-800">
-                  <div class="bg-red-400 h-2 rounded-full" style="width: 26%"></div>
+                  <div class="bg-red-400 h-2 rounded-full" style="width: 18%"></div>
                 </div>
               </div>
 
               <div>
                 <div class="flex justify-between text-xs mb-1">
-                  <span class="text-slate-300">YouTube Search Bar</span>
-                  <span class="font-bold text-indigo-400">12%</span>
+                  <span class="text-slate-300">Facebook Watch / Reels</span>
+                  <span class="font-bold text-blue-400">9%</span>
                 </div>
                 <div class="w-full bg-slate-950 rounded-full h-2 border border-slate-800">
-                  <div class="bg-indigo-400 h-2 rounded-full" style="width: 12%"></div>
+                  <div class="bg-blue-400 h-2 rounded-full" style="width: 9%"></div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Deep Intent Triggers -->
-          <div class="pt-4 border-t border-slate-800 space-y-3">
-            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Deep Engagement Signals</h4>
+          <div class="pt-4 border-t border-slate-800 space-y-2.5">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Platform Save & Share Rates</h4>
             <div class="flex justify-between items-center text-xs">
-              <span class="text-slate-300 flex items-center gap-1.5"><i class="fa-solid fa-bookmark text-amber-400"></i> Bookmark / Save Rate</span>
-              <span class="font-bold text-white bg-slate-950 px-2 py-1 rounded border border-slate-800">4.2% (High Intent)</span>
+              <span class="text-slate-300 flex items-center gap-1.5"><i class="fa-brands fa-instagram text-pink-400"></i> IG Saves Rate</span>
+              <span class="font-bold text-white bg-slate-950 px-2 py-0.5 rounded border border-slate-800">5.8% (Exceptional)</span>
             </div>
             <div class="flex justify-between items-center text-xs">
-              <span class="text-slate-300 flex items-center gap-1.5"><i class="fa-solid fa-share text-emerald-400"></i> Share-to-View Ratio</span>
-              <span class="font-bold text-white bg-slate-950 px-2 py-1 rounded border border-slate-800">1 : 28</span>
+              <span class="text-slate-300 flex items-center gap-1.5"><i class="fa-brands fa-facebook text-blue-400"></i> FB Direct Shares</span>
+              <span class="font-bold text-white bg-slate-950 px-2 py-0.5 rounded border border-slate-800">1 : 19 Ratio</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ================================================================= -->
-    <!-- TAB 3: AUTOMATED AI OPTIMIZATION & HINTS ENGINE -->
-    <!-- ================================================================= -->
+    <!-- TAB 3: AI HINTS (INCLUDING META SPECIFICS) -->
     <div id="view-ai-hints" class="hidden space-y-4">
       <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-6 space-y-4">
         <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> AI Strategic Hints & Social Optimization
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> AI Optimization & Platform-Specific Strategic Hints
         </h3>
-        <p class="text-xs text-slate-400">Automated structural recommendations calculated from retention drops and SEO search query analysis.</p>
+        <p class="text-xs text-slate-400">Automated structural adjustments based on cross-platform performance anomalies.</p>
 
-        <!-- Hint Card 1 -->
+        <!-- Instagram Reels Hint -->
+        <div class="bg-pink-500/10 border border-pink-500/20 rounded-xl p-4 flex gap-4 items-start">
+          <div class="w-8 h-8 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center shrink-0">
+            <i class="fa-brands fa-instagram"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-pink-300">Instagram Reels Audio Signal</h4>
+            <p class="text-xs text-slate-300 mt-1">High save rate detected on Instagram! <strong class="text-pink-200">Recommendation:</strong> Attach a trending native original audio track directly in the IG app before scheduling to trigger the Explore recommendation algorithm.</p>
+          </div>
+        </div>
+
+        <!-- Facebook Reels Hint -->
+        <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 flex gap-4 items-start">
+          <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+            <i class="fa-brands fa-facebook"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-blue-300">Facebook Page Audience Hook</h4>
+            <p class="text-xs text-slate-300 mt-1">FB viewers drop off slightly faster without on-screen captions. Ensure high-contrast closed captions are burned in or enabled via Meta Business Suite.</p>
+          </div>
+        </div>
+
+        <!-- TikTok/YT Pacing Hint -->
         <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex gap-4 items-start">
           <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
-            <i class="fa-solid fa-triangle-exclamation"></i>
+            <i class="fa-solid fa-bolt"></i>
           </div>
           <div>
             <h4 class="text-sm font-bold text-amber-300">Hook Pacing Alert (0:02 - 0:04 Timestamp)</h4>
-            <p class="text-xs text-slate-300 mt-1">An 18% retention dip occurs right at second 3. <strong class="text-amber-200">Correction Hint:</strong> Insert a fast visual jump cut, kinetic text overlay, or sound effect trigger directly before second 3 on future edits.</p>
-          </div>
-        </div>
-
-        <!-- Hint Card 2 -->
-        <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 flex gap-4 items-start">
-          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-            <i class="fa-solid fa-magnifying-glass-chart"></i>
-          </div>
-          <div>
-            <h4 class="text-sm font-bold text-emerald-300">Search SEO & Metadata Opportunity</h4>
-            <p class="text-xs text-slate-300 mt-1">High search query volume detected for query <code class="bg-slate-950 px-1.5 py-0.5 rounded text-emerald-400 font-mono">"capcut transitions 2026"</code>. Adding this exact keyphrase into your YouTube description will boost long-tail search views.</p>
-          </div>
-        </div>
-
-        <!-- Hint Card 3 -->
-        <div class="bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-4 flex gap-4 items-start">
-          <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
-            <i class="fa-solid fa-repeat"></i>
-          </div>
-          <div>
-            <h4 class="text-sm font-bold text-cyan-300">Cross-Platform Repurposing Directive</h4>
-            <p class="text-xs text-slate-300 mt-1">This post performed +34% better on TikTok than YouTube Shorts. Swap the background audio track for a trending YouTube Shorts native audio track before re-posting.</p>
+            <p class="text-xs text-slate-300 mt-1">Insert a kinetic text overlay or fast visual cut at second 3 to lock in high 3-second hook conversion across all networks.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ================================================================= -->
-    <!-- TAB 4: PRODUCTION PORTFOLIO & CLIENT VAULT -->
-    <!-- ================================================================= -->
+    <!-- TAB 4: PORTFOLIO -->
     <div id="view-portfolio" class="hidden space-y-6">
       <div class="flex justify-between items-center mb-2">
         <h3 class="text-lg font-bold text-white">Featured Production Vault</h3>
@@ -346,7 +380,6 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Project Card 1 -->
         <div class="bg-slate-900/80 rounded-2xl border border-slate-800 overflow-hidden group hover:border-indigo-500/50 transition">
           <div class="h-44 bg-slate-950 relative flex items-center justify-center">
             <i class="fa-solid fa-play text-3xl text-indigo-400 group-hover:scale-125 transition"></i>
@@ -358,7 +391,6 @@
           </div>
         </div>
 
-        <!-- Project Card 2 -->
         <div class="bg-slate-900/80 rounded-2xl border border-slate-800 overflow-hidden group hover:border-indigo-500/50 transition">
           <div class="h-44 bg-slate-950 relative flex items-center justify-center">
             <i class="fa-solid fa-play text-3xl text-cyan-400 group-hover:scale-125 transition"></i>
@@ -370,15 +402,14 @@
           </div>
         </div>
 
-        <!-- Project Card 3 -->
         <div class="bg-slate-900/80 rounded-2xl border border-slate-800 overflow-hidden group hover:border-indigo-500/50 transition">
           <div class="h-44 bg-slate-950 relative flex items-center justify-center">
-            <i class="fa-solid fa-play text-3xl text-emerald-400 group-hover:scale-125 transition"></i>
-            <span class="absolute top-3 left-3 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">Social Campaign</span>
+            <i class="fa-solid fa-play text-3xl text-pink-400 group-hover:scale-125 transition"></i>
+            <span class="absolute top-3 left-3 bg-pink-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">Social Campaign</span>
           </div>
           <div class="p-4">
-            <h4 class="text-sm font-bold text-white">Short-Form Micro-Content Rollout</h4>
-            <p class="text-xs text-slate-400 mt-1">Optimized 9:16 vertical cuts for TikTok, Instagram Reels, and Shorts.</p>
+            <h4 class="text-sm font-bold text-white">Multi-Channel Micro-Content Rollout</h4>
+            <p class="text-xs text-slate-400 mt-1">Optimized vertical edits synchronized for TikTok, IG Reels, FB Reels & Shorts.</p>
           </div>
         </div>
       </div>
@@ -386,14 +417,12 @@
 
   </main>
 
-  <!-- FOOTER -->
   <footer class="bg-slate-950 border-t border-slate-800/80 px-4 sm:px-8 py-6 text-center text-xs text-slate-500">
-    <p>© 2026 Latsky Multimedia. All rights reserved. Built for multi-platform distribution and deep social analytics.</p>
+    <p>© 2026 Latsky Multimedia. All rights reserved. Built for 4-channel omni-distribution and deep retention analytics.</p>
   </footer>
 
-  <!-- JAVASCRIPT LOGIC & CHART INITIALIZATION -->
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    // Tab Switching Logic
     function switchTab(tabName) {
       ['upload', 'analytics', 'ai-hints', 'portfolio'].forEach(t => {
         const view = document.getElementById(`view-${t}`);
@@ -426,28 +455,32 @@
       }
     }
 
-    // Mock OAuth State Toggle
-    let ytConnected = true;
-    let ttConnected = true;
+    let authState = { yt: true, tt: true, ig: true, fb: true };
 
     function toggleAuth(platform) {
-      if (platform === 'yt') {
-        ytConnected = !ytConnected;
-        const txt = document.getElementById('yt-auth-text');
-        txt.innerText = ytConnected ? 'YouTube: Connected (@LatskyMedia)' : 'YouTube: Log In';
-      } else {
-        ttConnected = !ttConnected;
-        const txt = document.getElementById('tt-auth-text');
-        txt.innerText = ttConnected ? 'TikTok: Connected (@JohannLatsky)' : 'TikTok: Log In';
+      authState[platform] = !authState[platform];
+      const btnMap = {
+        yt: { text: 'yt-auth-text', name: 'YouTube' },
+        tt: { text: 'tt-auth-text', name: 'TikTok' },
+        ig: { text: 'ig-auth-text', name: 'Instagram' },
+        fb: { text: 'fb-auth-text', name: 'Facebook' }
+      };
+      const element = document.getElementById(btnMap[platform].text);
+      if (element) {
+        element.innerText = authState[platform] ? btnMap[platform].name : `${btnMap[platform].name}: Off`;
       }
     }
 
-    // Upload Action Trigger
     function triggerUpload() {
-      alert('Uploading master asset directly to YouTube Shorts & TikTok via OAuth 2.0 API...');
+      const selected = [];
+      if (document.getElementById('chk-yt').checked) selected.push('YouTube Shorts');
+      if (document.getElementById('chk-tt').checked) selected.push('TikTok');
+      if (document.getElementById('chk-ig').checked) selected.push('Instagram Reels');
+      if (document.getElementById('chk-fb').checked) selected.push('Facebook Reels');
+
+      alert(`Dispatching master asset to:\n- ${selected.join('\n- ')}`);
     }
 
-    // Chart.js Retention Curve Initialization
     window.onload = function() {
       const ctx = document.getElementById('retentionChart').getContext('2d');
       new Chart(ctx, {
@@ -457,41 +490,49 @@
           datasets: [
             {
               label: 'TikTok Retention (%)',
-              data: [100, 71.4, 65, 62, 58, 55, 50, 44, 40],
+              data: [100, 76, 68, 64, 60, 56, 51, 45, 41],
               borderColor: '#22d3ee',
-              backgroundColor: 'rgba(34, 211, 238, 0.08)',
+              backgroundColor: 'rgba(34, 211, 238, 0.05)',
               fill: true,
               tension: 0.35,
-              borderWidth: 2.5
+              borderWidth: 2
+            },
+            {
+              label: 'IG Reels Retention (%)',
+              data: [100, 78, 72, 67, 63, 59, 54, 48, 43],
+              borderColor: '#ec4899',
+              backgroundColor: 'rgba(236, 72, 153, 0.05)',
+              fill: true,
+              tension: 0.35,
+              borderWidth: 2
             },
             {
               label: 'YouTube Shorts Retention (%)',
-              data: [100, 68.0, 61, 56, 52, 48, 45, 38, 35],
+              data: [100, 71, 63, 58, 54, 50, 46, 39, 36],
               borderColor: '#ef4444',
-              backgroundColor: 'rgba(239, 68, 68, 0.08)',
+              backgroundColor: 'rgba(239, 68, 68, 0.05)',
               fill: true,
               tension: 0.35,
-              borderWidth: 2.5
+              borderWidth: 2
+            },
+            {
+              label: 'FB Reels Retention (%)',
+              data: [100, 68, 59, 53, 49, 45, 41, 35, 31],
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.05)',
+              fill: true,
+              tension: 0.35,
+              borderWidth: 2
             }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false }
-          },
+          plugins: { legend: { display: false } },
           scales: {
-            x: { 
-              ticks: { color: '#64748b', font: { size: 11 } }, 
-              grid: { color: 'rgba(51, 65, 85, 0.3)' } 
-            },
-            y: { 
-              ticks: { color: '#64748b', font: { size: 11 } }, 
-              grid: { color: 'rgba(51, 65, 85, 0.3)' }, 
-              min: 0, 
-              max: 100 
-            }
+            x: { ticks: { color: '#64748b', font: { size: 11 } }, grid: { color: 'rgba(51, 65, 85, 0.3)' } },
+            y: { ticks: { color: '#64748b', font: { size: 11 } }, grid: { color: 'rgba(51, 65, 85, 0.3)' }, min: 0, max: 100 }
           }
         }
       });
