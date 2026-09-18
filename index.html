@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latsky Socials Manager | Hospitality AI Co-Pilot</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0a0d14',
+                        cardbg: '#111827',
+                        cardborder: '#1f2937',
+                        accent: '#3b82f6',
+                        accenthover: '#2563eb',
+                        success: '#10b981',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js for lightweight reactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glow-button {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .glow-button::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(90deg, #3b82f6, #10b981, #6366f1);
+            border-radius: 9999px;
+            z-index: -1;
+            opacity: 0.7;
+            filter: blur(8px);
+            transition: opacity 0.3s ease;
+        }
+        .glow-button:hover::after {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-500 selection:text-white" x-data="{ currentTab: 'today', auditModalOpen: false, lang: 'en', publishedToast: false }">
+
+    <!-- Top Navigation Header -->
+    <header class="border-b border-cardborder bg-darkbg/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-500 flex items-center justify-center font-bold text-lg shadow-lg shadow-blue-500/20">
+                LS
+            </div>
+            <div>
+                <h1 class="font-bold text-base text-white tracking-wide">Latsky Socials Manager</h1>
+                <p class="text-xs text-slate-400">Paternoster Seaside Cottages • West Coast Hub</p>
+            </div>
+        </div>
+
+        <!-- Masterclass Analyze Socials Button -->
+        <button @click="auditModalOpen = true" class="glow-button px-5 py-2.5 rounded-full bg-slate-900 text-white font-semibold text-xs tracking-wider uppercase border border-white/10 flex items-center gap-2 hover:scale-105 active:scale-95 transition">
+            <svg class="w-4 h-4 text-emerald-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Analyze Socials Audit
+        </button>
+    </header>
+
+    <!-- Main App Container (3-Tab Navigation) -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col gap-6">
+
+        <!-- Tab Bar -->
+        <div class="flex border-b border-cardborder gap-8 text-sm font-medium">
+            <button @click="currentTab = 'today'" :class="currentTab === 'today' ? 'border-blue-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-200'" class="pb-3 border-b-2 transition flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Today's Post
+            </button>
+            <button @click="currentTab = 'insights'" :class="currentTab === 'insights' ? 'border-blue-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-200'" class="pb-3 border-b-2 transition flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                Insights & Pulse
+            </button>
+            <button @click="currentTab = 'whatsapp'" :class="currentTab === 'whatsapp' ? 'border-blue-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-200'" class="pb-3 border-b-2 transition flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                WhatsApp Co-Pilot
+            </button>
+        </div>
+
+        <!-- TAB 1: TODAY'S PRE-FILLED POST -->
+        <div x-show="currentTab === 'today'" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Main Auto-Built Card (2 Cols) -->
+            <div class="lg:col-span-2 glass-panel rounded-2xl p-6 flex flex-col justify-between shadow-xl">
+                <div>
+                    <!-- Card Header -->
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-blue-500/10 text-blue-400 text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-500/20">AI Auto-Built</span>
+                            <span class="text-xs text-slate-400">Scheduled for Today @ 17:00</span>
+                        </div>
+                        <!-- Language Toggle -->
+                        <div class="bg-cardborder p-1 rounded-lg flex text-xs">
+                            <button @click="lang = 'en'" :class="lang === 'en' ? 'bg-blue-600 text-white' : 'text-slate-400'" class="px-3 py-1 rounded-md transition font-medium">EN</button>
+                            <button @click="lang = 'af'" :class="lang === 'af' ? 'bg-blue-600 text-white' : 'text-slate-400'" class="px-3 py-1 rounded-md transition font-medium">AF</button>
+                        </div>
+                    </div>
+
+                    <!-- Content Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        <div class="h-64 rounded-xl bg-cover bg-center border border-cardborder relative group" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600')">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition rounded-xl flex items-center justify-center">
+                                <span class="bg-black/70 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-md">Change Photo from Bank</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-3">
+                            <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">AI Generated Caption</label>
+                            <div class="bg-cardborder/50 border border-cardborder rounded-xl p-4 text-sm text-slate-200 leading-relaxed min-h-[130px]">
+                                <template x-if="lang === 'en'">
+                                    <p>As the sun dips below the Atlantic horizon in Paternoster, our guests are treated to front-row seats. Who are you bringing on your next escape? 🌅✨ #PaternosterGetaway #WestCoastLiving</p>
+                                </template>
+                                <template x-if="lang === 'af'">
+                                    <p>Soos die son sak oor die Atlantiese horison in Paternoster, geniet ons gaste voorste sitplekke. Wie bring jy saam op jou volgende wegbreek? 🌅✨ #PaternosterWegbreek #Weskus</p>
+                                </template>
+                            </div>
+                            <!-- Clickable Hashtag Pills -->
+                            <div class="flex flex-wrap gap-1.5 pt-1">
+                                <span class="text-[11px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-blue-500/20 transition">+ #Paternoster</span>
+                                <span class="text-[11px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-emerald-500/20 transition">+ #SunsetViews</span>
+                                <span class="text-[11px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-purple-500/20 transition">+ #SeasideEscape</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Action & Growth Tip -->
+                <div class="mt-6 pt-4 border-t border-cardborder flex flex-col gap-3">
+                    <div class="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 rounded-lg">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span><strong>Why this works:</strong> Shoreline photos are outperforming indoor shots 2:1 this week for West Coast inquiries.</span>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs text-slate-400 font-medium">Platforms:</span>
+                            <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer"><input type="checkbox" checked class="rounded border-cardborder text-blue-600 focus:ring-0"> IG</label>
+                            <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer"><input type="checkbox" checked class="rounded border-cardborder text-blue-600 focus:ring-0"> FB</label>
+                            <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer"><input type="checkbox" class="rounded border-cardborder text-blue-600 focus:ring-0"> TikTok</label>
+                            <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer"><input type="checkbox" checked class="rounded border-cardborder text-blue-600 focus:ring-0"> GBP</label>
+                        </div>
+                        <button @click="publishedToast = true; setTimeout(() => publishedToast = false, 3500)" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition shadow-lg shadow-blue-600/30 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            Confirm & Publish Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Content Bank Sidebar (1 Col) -->
+            <div class="glass-panel rounded-2xl p-6 flex flex-col gap-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="font-bold text-sm text-white">Smart Content Bank</h2>
+                    <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">24 Cached</span>
+                </div>
+                <p class="text-xs text-slate-400">AI auto-suggests reposts from 3 months ago during matching seasonal windows.</p>
+                
+                <div class="flex-1 overflow-y-auto space-y-3 max-h-[380px] pr-1">
+                    <div class="bg-cardborder/40 border border-cardborder rounded-xl p-2.5 flex items-center gap-3 cursor-pointer hover:border-blue-500/50 transition">
+                        <div class="w-12 h-12 rounded-lg bg-cover bg-center shrink-0" style="background-image: url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=100')"></div>
+                        <div class="overflow-hidden">
+                            <p class="text-xs font-semibold text-slate-200 truncate">Winter Fireplace Evening</p>
+                            <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded mt-1 inline-block">Seasonal Match (Winter)</span>
+                        </div>
+                    </div>
+                    <div class="bg-cardborder/40 border border-cardborder rounded-xl p-2.5 flex items-center gap-3 cursor-pointer hover:border-blue-500/50 transition">
+                        <div class="w-12 h-12 rounded-lg bg-cover bg-center shrink-0" style="background-image: url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=100')"></div>
+                        <div class="overflow-hidden">
+                            <p class="text-xs font-semibold text-slate-200 truncate">Patio Morning Coffee</p>
+                            <span class="text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded mt-1 inline-block">High Engagement</span>
+                        </div>
+                    </div>
+                    <div class="bg-cardborder/40 border border-cardborder rounded-xl p-2.5 flex items-center gap-3 cursor-pointer hover:border-blue-500/50 transition">
+                        <div class="w-12 h-12 rounded-lg bg-cover bg-center shrink-0" style="background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100')"></div>
+                        <div class="overflow-hidden">
+                            <p class="text-xs font-semibold text-slate-200 truncate">Seafood Braai Deck</p>
+                            <span class="text-[10px] text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded mt-1 inline-block">Weekend Favorite</span>
+                        </div>
+                    </div>
+                </div>
+
+                <label class="border-2 border-dashed border-cardborder hover:border-blue-500 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer transition bg-cardborder/20">
+                    <span class="text-xs text-slate-300 font-semibold">+ Drop New Photo Here</span>
+                    <span class="text-[10px] text-slate-500 mt-0.5">Instant AI Tagging & Captioning</span>
+                    <input type="file" class="hidden" accept="image/*">
+                </label>
+            </div>
+
+        </div>
+
+        <!-- TAB 2: INSIGHTS & WEST COAST TOURISM PULSE -->
+        <div x-show="currentTab === 'insights'" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Metric 1 -->
+            <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Booking Correlation</span>
+                    <div class="text-3xl font-extrabold text-white mt-2">4 Direct Inquiries</div>
+                    <p class="text-xs text-emerald-400 mt-1">Generated by Tuesday's Sunset Reel</p>
+                </div>
+                <div class="mt-6 pt-4 border-t border-cardborder text-xs text-slate-400">
+                    Metric that matters: Likes vs Actual Bookings tracked via WhatsApp.
+                </div>
+            </div>
+            <!-- Metric 2 -->
+            <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">West Coast Trend Radar</span>
+                    <div class="text-lg font-bold text-white mt-2">"Last-minute spring weekend escapes"</div>
+                    <p class="text-xs text-blue-400 mt-1">Surging 42% across regional traveler searches</p>
+                </div>
+                <div class="mt-6 pt-4 border-t border-cardborder text-xs text-slate-400">
+                    Sourced from regional search trends & network booking patterns.
+                </div>
+            </div>
+            <!-- Metric 3 -->
+            <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">A/B Testing Auto-Pilot</span>
+                    <div class="text-lg font-bold text-emerald-400 mt-2">Emotional Hook +34% Clicks</div>
+                    <p class="text-xs text-slate-300 mt-1">Winning caption variant set as default for Thursday.</p>
+                </div>
+                <div class="mt-6 pt-4 border-t border-cardborder text-xs text-slate-400">
+                    System quietly auto-varies one variable per week.
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: WHATSAPP CO-PILOT SIMULATOR -->
+        <div x-show="currentTab === 'whatsapp'" class="glass-panel rounded-2xl p-6 max-w-3xl mx-auto w-full flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-cardborder pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold">
+                        WA
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-sm text-white">Latsky Socials WhatsApp Assistant</h2>
+                        <p class="text-xs text-emerald-400 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Online • Zero-Friction Mode</p>
+                    </div>
+                </div>
+                <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full">For hands-off owners</span>
+            </div>
+
+            <!-- Chat Stream Simulation -->
+            <div class="flex flex-col gap-3 py-4 max-h-[300px] overflow-y-auto pr-2">
+                <div class="self-end bg-blue-600 text-white text-xs max-w-md p-3 rounded-2xl rounded-tr-none shadow-md">
+                    [Sent Photo of Cottage Porch via WhatsApp]
+                </div>
+                <div class="self-start bg-cardborder border border-cardborder text-slate-200 text-xs max-w-lg p-4 rounded-2xl rounded-tl-none shadow-md space-y-2">
+                    <p class="font-semibold text-emerald-400">📸 Latsky Socials AI Co-Pilot:</p>
+                    <p>Here is your auto-built post for tomorrow @ 08:00 AM:</p>
+                    <p class="italic bg-darkbg/50 p-2.5 rounded border border-cardborder text-slate-300">"Crackling fireplaces and quiet coastlines. Experience the ultimate winter reset at our Paternoster cottage. 🔥☕ #WinterGetaway #WestCoastLiving"</p>
+                    <p class="font-medium text-slate-300">👉 Reply <strong>YES</strong> to lock it in, or <strong>EDIT</strong> to tweak.</p>
+                </div>
+                <div class="self-end bg-blue-600 text-white text-xs p-3 rounded-2xl rounded-tr-none shadow-md font-medium">
+                    YES
+                </div>
+                <div class="self-start bg-cardborder border border-cardborder text-emerald-400 text-xs p-3 rounded-2xl rounded-tl-none font-semibold">
+                    ✅ Published successfully to Instagram & Facebook!
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ANALYZE SOCIALS AUDIT MODAL -->
+    <div x-show="auditModalOpen" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4" x-transition>
+        <div class="glass-panel bg-cardbg border border-cardborder rounded-2xl max-w-lg w-full p-6 relative shadow-2xl" @click.outside="auditModalOpen = false">
+            <button @click="auditModalOpen = false" class="absolute top-4 right-4 text-slate-400 hover:text-white">&times;</button>
+            
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-extrabold text-xl">
+                    84
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg text-white">West Coast Social Audit</h3>
+                    <p class="text-xs text-slate-400">Paternoster Seaside Cottages • Live Health Score</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 my-6 text-xs">
+                <div class="bg-emerald-500/10 border border-emerald-500/20 p-3.5 rounded-xl text-emerald-300">
+                    <p class="font-semibold mb-1">Strong Points:</p>
+                    <p>Your Reel save rates on shoreline videos are 40% higher than regional average. Excellent visual hook usage!</p>
+                </div>
+                <div class="bg-amber-500/10 border border-amber-500/20 p-3.5 rounded-xl text-amber-300">
+                    <p class="font-semibold mb-1">Critical Fixes Needed:</p>
+                    <p>Mid-week consistency has dropped. Set up auto-recycling from your Content Bank to fill Tuesday and Wednesday slots effortlessly.</p>
+                </div>
+            </div>
+
+            <button @click="auditModalOpen = false" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-xl text-xs transition">
+                Apply AI Recommendations to Weekly Schedule
+            </button>
+        </div>
+    </div>
+
+    <!-- Published Success Toast -->
+    <div x-show="publishedToast" x-transition class="fixed bottom-6 right-6 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        Post confirmed and queued for multi-platform distribution!
+    </div>
+
+</body>
+</html>
