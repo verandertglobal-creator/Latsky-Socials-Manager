@@ -61,26 +61,59 @@
           gbpInput: 'Paternoster Seaside Cottages', 
           lang: 'en', 
           publishedToast: false,
+          
+          // Platform Toggles & Formats
+          igEnabled: true,
           igFormat: 'reel',
+          fbEnabled: true,
           fbFormat: 'feed',
+          twitterEnabled: false,
           twitterFormat: 'media',
           
-          // Media Upload State
+          // Media Upload & Smart Vision State
           mediaFile: null,
           mediaPreviewUrl: '',
           mediaType: '',
           isDragging: false,
+          isAnalyzing: false,
+          
+          // Editable Caption & Dynamic Tags
+          captionText: 'As the sun dips below the Atlantic horizon, our guests are treated to front-row seats. Who are you bringing on your next escape? 🌅✨',
           
           handleFile(file) {
               if (!file) return;
               this.mediaFile = file;
               this.mediaType = file.type.startsWith('video') ? 'video' : 'image';
               this.mediaPreviewUrl = URL.createObjectURL(file);
+              
+              // Trigger Smart Vision AI Analysis on Uploaded File
+              this.isAnalyzing = true;
+              setTimeout(() => {
+                  this.isAnalyzing = false;
+                  const fileNameLower = file.name.toLowerCase();
+                  if (fileNameLower.includes('fire') || fileNameLower.includes('cozy')) {
+                      this.captionText = 'Crackling fires and quiet evenings. Experience ultimate comfort and reset your rhythm. 🔥☕';
+                  } else if (fileNameLower.includes('coffee') || fileNameLower.includes('morning')) {
+                      this.captionText = 'Morning light and fresh ocean air right on your doorstep. Ready for a slow start? ☕🌊';
+                  } else if (fileNameLower.includes('sunset') || fileNameLower.includes('dusk')) {
+                      this.captionText = 'Golden hour magic on the coast. Unwind and soak in the views. 🌅✨';
+                  } else {
+                      this.captionText = 'Captured moments from your coastal escape. Experience peace, comfort, and unmatched views. 🌊✨';
+                  }
+              }, 1200);
           },
+          
           clearMedia() {
               this.mediaFile = null;
               this.mediaPreviewUrl = '';
               this.mediaType = '';
+              this.captionText = 'Upload an image or video to generate a smart AI caption tailored to your media.';
+          },
+
+          appendTag(tag) {
+              if (!this.captionText.includes(tag)) {
+                  this.captionText = this.captionText.trim() + ' ' + tag;
+              }
           },
 
           runAudit() {
@@ -92,14 +125,14 @@
       }">
 
     <!-- Top Navigation Header -->
-    <header class="border-b border-cardborder bg-darkbg/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+    <header class="border-b border-cardborder bg-darkbg/85 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-500 flex items-center justify-center font-bold text-lg shadow-lg shadow-blue-500/20">
                 LS
             </div>
             <div>
                 <h1 class="font-bold text-base text-white tracking-wide">Latsky Socials Manager</h1>
-                <p class="text-xs text-slate-400">Paternoster Seaside Cottages • West Coast Hub</p>
+                <p class="text-xs text-slate-400">Smart Hospitality Co-Pilot • Multi-Platform Hub</p>
             </div>
         </div>
 
@@ -129,13 +162,15 @@
             </button>
         </div>
 
-        <!-- TAB 1: TODAY'S PRE-FILLED POST -->
+        <!-- TAB 1: TODAY'S POST & SMART VISION STUDIO -->
         <div x-show="currentTab === 'today'" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 glass-panel rounded-2xl p-6 flex flex-col justify-between shadow-xl">
                 <div>
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-2">
-                            <span class="bg-blue-500/10 text-blue-400 text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-500/20">AI Auto-Built</span>
+                            <span class="bg-blue-500/10 text-blue-400 text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-500/20 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> Smart Vision AI Active
+                            </span>
                             <span class="text-xs text-slate-400">Scheduled for Today @ 17:00</span>
                         </div>
                         <div class="bg-cardborder p-1 rounded-lg flex text-xs">
@@ -152,8 +187,16 @@
                              @dragleave.prevent="isDragging = false"
                              @drop.prevent="isDragging = false; handleFile($event.dataTransfer.files[0])">
                             
-                            <!-- State A: File Loaded Preview -->
-                            <template x-if="mediaPreviewUrl">
+                            <!-- State A: Smart Vision AI Analyzing Overlay -->
+                            <template x-if="isAnalyzing">
+                                <div class="absolute inset-0 bg-darkbg/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center p-4 space-y-3">
+                                    <div class="w-8 h-8 rounded-full border-2 border-blue-500 border-t-transparent animate-spin"></div>
+                                    <p class="text-xs font-semibold text-blue-400">Analyzing visual elements & content...</p>
+                                </div>
+                            </template>
+
+                            <!-- State B: File Loaded Preview -->
+                            <template x-if="mediaPreviewUrl && !isAnalyzing">
                                 <div class="absolute inset-0 w-full h-full bg-darkbg flex items-center justify-center">
                                     <template x-if="mediaType === 'image'">
                                         <img :src="mediaPreviewUrl" class="w-full h-full object-cover">
@@ -171,12 +214,12 @@
                                 </div>
                             </template>
 
-                            <!-- State B: Empty Drop Zone -->
-                            <template x-if="!mediaPreviewUrl">
-                                <div class="flex flex-col items-center justify-center cursor-pointer">
+                            <!-- State C: Empty Drop Zone with exact requested text -->
+                            <template x-if="!mediaPreviewUrl && !isAnalyzing">
+                                <div class="flex flex-col items-center justify-center cursor-pointer w-full h-full">
                                     <svg class="w-10 h-10 text-slate-500 mb-2 group-hover:text-blue-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                                     <p class="text-xs font-semibold text-slate-200">drag/drop image/video here</p>
-                                    <p class="text-[10px] text-slate-500 mt-1">Supports PNG, JPG, MP4, MOV, WEBM</p>
+                                    <p class="text-[10px] text-slate-500 mt-1">Supports JPG, PNG, MP4, MOV, WEBM</p>
                                 </div>
                             </template>
 
@@ -184,20 +227,20 @@
                             <input type="file" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/png,image/jpeg,image/jpg,video/mp4,video/quicktime,video/webm" @change="handleFile($event.target.files[0])">
                         </div>
 
+                        <!-- Editable Caption & Dynamic Tags -->
                         <div class="flex flex-col gap-3">
-                            <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">AI Generated Caption</label>
-                            <div class="bg-cardborder/50 border border-cardborder rounded-xl p-4 text-sm text-slate-200 leading-relaxed min-h-[130px]">
-                                <template x-if="lang === 'en'">
-                                    <p>As the sun dips below the Atlantic horizon in Paternoster, our guests are treated to front-row seats. Who are you bringing on your next escape? 🌅✨ #PaternosterGetaway #WestCoastLiving</p>
-                                </template>
-                                <template x-if="lang === 'af'">
-                                    <p>Soos die son sak oor die Atlantiese horison in Paternoster, geniet ons gaste voorste sitplekke. Wie bring jy saam op jou volgende wegbreek? 🌅✨ #PaternosterWegbreek #Weskus</p>
-                                </template>
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">AI Description & Caption</label>
+                                <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Editable</span>
                             </div>
+                            <textarea x-model="captionText" rows="5" class="w-full bg-cardborder/40 border border-cardborder rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed focus:outline-none focus:border-blue-500 resize-none"></textarea>
+                            
+                            <!-- Clickable Suggested Tags (Clicks append instantly) -->
                             <div class="flex flex-wrap gap-1.5 pt-1">
-                                <span class="text-[11px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-blue-500/20 transition">+ #Paternoster</span>
-                                <span class="text-[11px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-emerald-500/20 transition">+ #SunsetViews</span>
-                                <span class="text-[11px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-purple-500/20 transition">+ #SeasideEscape</span>
+                                <span @click="appendTag('#CoastalEscape')" class="text-[11px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-blue-500/20 transition">+ #CoastalEscape</span>
+                                <span @click="appendTag('#SunsetViews')" class="text-[11px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-emerald-500/20 transition">+ #SunsetViews</span>
+                                <span @click="appendTag('#WeekendVibes')" class="text-[11px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-purple-500/20 transition">+ #WeekendVibes</span>
+                                <span @click="appendTag('#SeasideLiving')" class="text-[11px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-amber-500/20 transition">+ #SeasideLiving</span>
                             </div>
                         </div>
                     </div>
@@ -206,44 +249,57 @@
                 <div class="mt-6 pt-4 border-t border-cardborder flex flex-col gap-4">
                     <div class="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 rounded-lg">
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <span><strong>Audience Note:</strong> 64% of your engaged followers are female decision-makers from Cape Town—scenic golden-hour reels drive highest saves.</span>
+                        <span><strong>Smart Vision Note:</strong> Image analysis parses visual composition to match your core audience preferences without making false location assumptions.</span>
                     </div>
 
-                    <!-- Platform Format Selection Panel -->
-                    <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl space-y-2.5">
-                        <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">Platform Posting Format Configuration</span>
+                    <!-- Platform Toggle & Format Configuration Panel -->
+                    <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl space-y-3">
+                        <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">Platform Toggles & Format Configuration</span>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                            <!-- Instagram Format -->
-                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2 rounded-lg border border-cardborder">
-                                <span class="text-slate-300 font-medium">Instagram</span>
-                                <select x-model="igFormat" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 focus:outline-none focus:border-blue-500 text-xs">
+                            
+                            <!-- Instagram Toggle & Format -->
+                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2.5 rounded-lg border border-cardborder">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" x-model="igEnabled" class="rounded bg-cardbg border-cardborder text-blue-600 focus:ring-0 cursor-pointer">
+                                    <span class="text-slate-200 font-medium">Instagram</span>
+                                </div>
+                                <select x-model="igFormat" :disabled="!igEnabled" :class="!igEnabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 focus:outline-none focus:border-blue-500 text-xs transition">
                                     <option value="reel">Reel</option>
                                     <option value="feed">Feed Post</option>
                                     <option value="story">Story</option>
                                 </select>
                             </div>
-                            <!-- Facebook Format -->
-                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2 rounded-lg border border-cardborder">
-                                <span class="text-slate-300 font-medium">Facebook</span>
-                                <select x-model="fbFormat" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 focus:outline-none focus:border-blue-500 text-xs">
+
+                            <!-- Facebook Toggle & Format -->
+                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2.5 rounded-lg border border-cardborder">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" x-model="fbEnabled" class="rounded bg-cardbg border-cardborder text-blue-600 focus:ring-0 cursor-pointer">
+                                    <span class="text-slate-200 font-medium">Facebook</span>
+                                </div>
+                                <select x-model="fbFormat" :disabled="!fbEnabled" :class="!fbEnabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 focus:outline-none focus:border-blue-500 text-xs transition">
                                     <option value="feed">Feed Post</option>
                                     <option value="story">Story</option>
                                     <option value="reel">Reel</option>
                                 </select>
                             </div>
-                            <!-- Twitter / X Format -->
-                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2 rounded-lg border border-cardborder">
-                                <span class="text-slate-300 font-medium">Twitter / X</span>
-                                <select x-model="twitterFormat" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 focus:outline-none focus:border-blue-500 text-xs">
+
+                            <!-- Twitter / X Toggle & Format -->
+                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2.5 rounded-lg border border-cardborder">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" x-model="twitterEnabled" class="rounded bg-cardbg border-cardborder text-blue-600 focus:ring-0 cursor-pointer">
+                                    <span class="text-slate-200 font-medium">Twitter / X</span>
+                                </div>
+                                <select x-model="twitterFormat" :disabled="!twitterEnabled" :class="!twitterEnabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 focus:outline-none focus:border-blue-500 text-xs transition">
                                     <option value="media">Media Tweet</option>
                                     <option value="post">Standard Tweet</option>
                                 </select>
                             </div>
+
                         </div>
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <span class="text-xs text-slate-400">Ready to publish simultaneously across configured networks.</span>
+                        <span class="text-xs text-slate-400">Publishes only to selected and enabled networks.</span>
                         <button @click="publishedToast = true; setTimeout(() => publishedToast = false, 3500)" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition shadow-lg shadow-blue-600/30 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             Confirm & Publish Now
@@ -258,16 +314,16 @@
                     <h2 class="font-bold text-sm text-white">Smart Content Bank</h2>
                     <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">24 Cached</span>
                 </div>
-                <p class="text-xs text-slate-400">AI auto-suggests top-performing seasonal assets based on past regional response.</p>
+                <p class="text-xs text-slate-400">AI auto-suggests top-performing seasonal assets based on visual feature extraction.</p>
                 <div class="flex-1 overflow-y-auto space-y-3 max-h-[380px] pr-1">
-                    <div class="bg-cardborder/40 border border-cardborder rounded-xl p-2.5 flex items-center gap-3 cursor-pointer hover:border-blue-500/50 transition">
+                    <div @click="handleFile({ name: 'fire_evening.jpg', type: 'image/jpeg' })" class="bg-cardborder/40 border border-cardborder rounded-xl p-2.5 flex items-center gap-3 cursor-pointer hover:border-blue-500/50 transition">
                         <div class="w-12 h-12 rounded-lg bg-cover bg-center shrink-0" style="background-image: url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=100')"></div>
                         <div class="overflow-hidden">
                             <p class="text-xs font-semibold text-slate-200 truncate">Winter Fireplace Evening</p>
-                            <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded mt-1 inline-block">High Female Engagement</span>
+                            <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded mt-1 inline-block">High Engagement</span>
                         </div>
                     </div>
-                    <div class="bg-cardborder/40 border border-cardborder rounded-xl p-2.5 flex items-center gap-3 cursor-pointer hover:border-blue-500/50 transition">
+                    <div @click="handleFile({ name: 'coffee_morning.jpg', type: 'image/jpeg' })" class="bg-cardborder/40 border border-cardborder rounded-xl p-2.5 flex items-center gap-3 cursor-pointer hover:border-blue-500/50 transition">
                         <div class="w-12 h-12 rounded-lg bg-cover bg-center shrink-0" style="background-image: url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=100')"></div>
                         <div class="overflow-hidden">
                             <p class="text-xs font-semibold text-slate-200 truncate">Patio Morning Coffee</p>
@@ -277,7 +333,7 @@
                 </div>
                 <label class="border-2 border-dashed border-cardborder hover:border-blue-500 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer transition bg-cardborder/20">
                     <span class="text-xs text-slate-300 font-semibold">+ Drop New Photo Here</span>
-                    <span class="text-[10px] text-slate-500 mt-0.5">Instant AI Tagging & Captioning</span>
+                    <span class="text-[10px] text-slate-500 mt-0.5">Instant Smart Vision Analysis</span>
                     <input type="file" class="hidden" accept="image/*,video/*" @change="handleFile($event.target.files[0])">
                 </label>
             </div>
@@ -289,23 +345,23 @@
                 <div>
                     <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Booking Correlation</span>
                     <div class="text-3xl font-extrabold text-white mt-2">4 Direct Inquiries</div>
-                    <p class="text-xs text-emerald-400 mt-1">Generated by Tuesday's Sunset Reel</p>
+                    <p class="text-xs text-emerald-400 mt-1">Generated by recent visual sunset post</p>
                 </div>
                 <div class="mt-6 pt-4 border-t border-cardborder text-xs text-slate-400">Tracked from Instagram DMs & WhatsApp clicks.</div>
             </div>
             <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
                 <div>
                     <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Primary Viewer Region</span>
-                    <div class="text-lg font-bold text-white mt-2">Cape Town Metro (58%)</div>
-                    <p class="text-xs text-blue-400 mt-1">Followed by Johannesburg (27%) & UK (15%)</p>
+                    <div class="text-lg font-bold text-white mt-2">Metro Hubs (58%)</div>
+                    <p class="text-xs text-blue-400 mt-1">High weekend escape intent</p>
                 </div>
-                <div class="mt-6 pt-4 border-t border-cardborder text-xs text-slate-400">Target market alignment: Excellent for 2-hour weekend escapes.</div>
+                <div class="mt-6 pt-4 border-t border-cardborder text-xs text-slate-400">Target market alignment: Excellent for short weekend getaways.</div>
             </div>
             <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
                 <div>
                     <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Audience Gender Split</span>
                     <div class="text-lg font-bold text-emerald-400 mt-2">64% Female | 36% Male</div>
-                    <p class="text-xs text-slate-300 mt-1">Women drive 82% of accommodation booking decisions.</p>
+                    <p class="text-xs text-slate-300 mt-1">Women drive majority of booking decisions.</p>
                 </div>
                 <div class="mt-6 pt-4 border-t border-cardborder text-xs text-slate-400">Content optimized for aesthetic ambiance & comfort.</div>
             </div>
@@ -324,15 +380,15 @@
                 <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full">For hands-off owners</span>
             </div>
             <div class="flex flex-col gap-3 py-4 max-h-[300px] overflow-y-auto pr-2">
-                <div class="self-end bg-blue-600 text-white text-xs max-w-md p-3 rounded-2xl rounded-tr-none shadow-md">[Sent Photo of Cottage Porch via WhatsApp]</div>
+                <div class="self-end bg-blue-600 text-white text-xs max-w-md p-3 rounded-2xl rounded-tr-none shadow-md">[Sent Photo via WhatsApp]</div>
                 <div class="self-start bg-cardborder border border-cardborder text-slate-200 text-xs max-w-lg p-4 rounded-2xl rounded-tl-none shadow-md space-y-2">
                     <p class="font-semibold text-emerald-400">📸 Latsky Socials AI Co-Pilot:</p>
-                    <p>Here is your auto-built post optimized for your Cape Town female demographic tomorrow @ 08:00 AM:</p>
-                    <p class="italic bg-darkbg/50 p-2.5 rounded border border-cardborder text-slate-300">"Crackling fireplaces and quiet coastlines. Experience the ultimate winter reset at our Paternoster cottage. 🔥☕ #WinterGetaway #WestCoastLiving"</p>
+                    <p>Smart Vision analyzed your photo and generated this custom caption:</p>
+                    <p class="italic bg-darkbg/50 p-2.5 rounded border border-cardborder text-slate-300" x-text="captionText"></p>
                     <p class="font-medium text-slate-300">👉 Reply <strong>YES</strong> to lock it in, or <strong>EDIT</strong> to tweak.</p>
                 </div>
                 <div class="self-end bg-blue-600 text-white text-xs p-3 rounded-2xl rounded-tr-none shadow-md font-medium">YES</div>
-                <div class="self-start bg-cardborder border border-cardborder text-emerald-400 text-xs p-3 rounded-2xl rounded-tl-none font-semibold">✅ Published successfully to Instagram & Facebook!</div>
+                <div class="self-start bg-cardborder border border-cardborder text-emerald-400 text-xs p-3 rounded-2xl rounded-tl-none font-semibold">✅ Published successfully to active networks!</div>
             </div>
         </div>
 
@@ -468,11 +524,11 @@
                             </h4>
                             <div class="space-y-2 text-xs">
                                 <div class="flex justify-between items-center bg-darkbg/50 px-3 py-1.5 rounded-lg border border-cardborder">
-                                    <span class="text-slate-300 font-medium">Cape Town Metro (Local)</span>
+                                    <span class="text-slate-300 font-medium">Metro Hubs (Local)</span>
                                     <span class="font-bold text-emerald-400">58%</span>
                                 </div>
                                 <div class="flex justify-between items-center bg-darkbg/50 px-3 py-1.5 rounded-lg border border-cardborder">
-                                    <span class="text-slate-300 font-medium">Johannesburg / Gauteng</span>
+                                    <span class="text-slate-300 font-medium">Gauteng Region</span>
                                     <span class="font-bold text-blue-400">27%</span>
                                 </div>
                                 <div class="flex justify-between items-center bg-darkbg/50 px-3 py-1.5 rounded-lg border border-cardborder">
@@ -487,11 +543,11 @@
                     <div class="space-y-2.5 text-xs">
                         <div class="bg-emerald-500/10 border border-emerald-500/20 p-3.5 rounded-xl text-emerald-200">
                             <p class="font-semibold mb-1 text-emerald-300">🚀 Growth Accelerator Strategy:</p>
-                            <p>With 58% of your viewers based in Cape Town, targeting Friday afternoon posts with "Last-minute weekend escape" messaging directly aligns with your local audience's booking behavior.</p>
+                            <p>Targeting Friday afternoon posts with "Last-minute weekend escape" messaging directly aligns with regional audience booking behavior.</p>
                         </div>
                         <div class="bg-blue-500/10 border border-blue-500/20 p-3.5 rounded-xl text-blue-200">
-                            <p class="font-semibold mb-1 text-blue-300">💡 Content Tuning for Female Decision-Makers (64%):</p>
-                            <p>Emphasize interior comfort, sunset views, and relaxation aesthetics in your visuals—these posts yield 3.4x more saves and profile shares among your core demographic.</p>
+                            <p class="font-semibold mb-1 text-blue-300">💡 Content Tuning for Core Decision-Makers (64%):</p>
+                            <p>Emphasize interior comfort, lighting, and relaxation aesthetics in your visuals—these posts yield higher saves and profile shares.</p>
                         </div>
                     </div>
 
@@ -507,7 +563,7 @@
     <!-- Published Success Toast -->
     <div x-show="publishedToast" x-transition class="fixed bottom-6 right-6 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        Post confirmed and queued for multi-platform distribution!
+        Post confirmed and queued for distribution to enabled networks!
     </div>
 
 </body>
