@@ -231,7 +231,7 @@
 
           <!-- AI Visual Scan Output Panel -->
           <div id="ai-results-panel" class="bg-gradient-to-b from-indigo-950/40 via-slate-900 to-slate-900 rounded-2xl border border-indigo-500/30 p-5 space-y-4 relative overflow-hidden">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3 flex-wrap gap-2">
               <div class="flex items-center gap-2">
                 <div class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
                   <i class="fa-solid fa-brain text-sm"></i>
@@ -241,54 +241,40 @@
                   <p class="text-[10px] text-indigo-300">Composition analysis, viral hooks & real-time trending tags</p>
                 </div>
               </div>
-              <span id="ai-status-badge" class="text-[10px] bg-slate-800 text-slate-400 border border-slate-700 px-2 py-0.5 rounded">Ready for Scan</span>
+              
+              <!-- Added API Key Input Field -->
+              <div class="flex items-center gap-2">
+                <input type="password" id="api-key-input" placeholder="Gemini API Key (Optional)" class="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-indigo-500 w-44">
+                <span id="ai-status-badge" class="text-[10px] bg-slate-800 text-slate-400 border border-slate-700 px-2 py-0.5 rounded">Ready for Scan</span>
+              </div>
             </div>
 
             <div id="ai-scanning-state" class="hidden py-8 flex flex-col items-center justify-center text-center space-y-2">
               <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400"></i>
-              <p class="text-xs font-medium text-slate-300">Scanning visual frames & fetching real-time platform trends...</p>
+              <p class="text-xs font-medium text-slate-300">Scanning visual frames & generating hooks...</p>
             </div>
 
             <div id="ai-output-content" class="space-y-4">
               <div>
                 <label class="block text-[11px] font-semibold text-slate-400 mb-1">Recommended Video / Post Titles</label>
                 <div class="space-y-1.5" id="suggested-titles">
-                  <div onclick="applyTitle(this.innerText)" class="p-2 bg-slate-950/80 border border-slate-800 hover:border-indigo-500/50 rounded-lg text-xs text-slate-200 cursor-pointer transition flex justify-between items-center group">
-                    <span>3 Editing Secrets That Quadrupled My Video Retention</span>
-                    <i class="fa-solid fa-arrow-right text-indigo-400 opacity-0 group-hover:opacity-100 transition"></i>
-                  </div>
+                  <p class="text-xs text-slate-500 italic p-2 bg-slate-950/50 rounded-lg border border-slate-800/50">Click "AI Scan Asset" to generate title options...</p>
                 </div>
               </div>
 
               <div>
                 <label class="block text-[11px] font-semibold text-slate-400 mb-1">High-Converting AI Caption & Hook</label>
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-                  <p id="suggested-caption" class="text-xs text-slate-200 leading-relaxed whitespace-pre-line">🎬 Stop losing viewers in the first 3 seconds! Here is the exact retention editing framework we use for commercial brand videos:
-
-1. Dynamic Visual Hook (0:00 - 0:02)
-2. Color Grading Pacing & Sound Design
-3. High-Impact Call-to-Action
-
-Drop a comment below if you want the project breakdown! 👇</p>
+                  <p id="suggested-caption" class="text-xs text-slate-400 italic">Click "AI Scan Asset" to generate optimized captions...</p>
                 </div>
               </div>
 
               <div>
                 <div class="flex justify-between items-center mb-1.5">
-                  <label class="block text-[11px] font-semibold text-slate-400">Real-Time Trending Tags (Click to Select / Refresh)</label>
-                  <div class="flex items-center gap-1 text-[10px]">
-                    <button onclick="fetchLiveTrendingTags('viral')" type="button" class="px-2 py-0.5 bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 rounded border border-indigo-500/30 transition">Viral 2026</button>
-                    <button onclick="fetchLiveTrendingTags('filmmaking')" type="button" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition">Video Production</button>
-                    <button onclick="fetchLiveTrendingTags('tech')" type="button" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition">AI & Tech</button>
-                  </div>
+                  <label class="block text-[11px] font-semibold text-slate-400">Real-Time Trending Tags</label>
                 </div>
                 <div id="suggested-tags" class="flex flex-wrap gap-1.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800 min-h-[42px]">
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> #viralreels2026</span>
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> #fbreels</span>
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> #trendingreels2026</span>
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> #youtubeshorts</span>
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> #filmmakingtok</span>
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> #contentcreator</span>
+                  <span class="text-[10px] text-slate-500 italic">No tags generated yet.</span>
                 </div>
               </div>
 
@@ -745,32 +731,58 @@ Drop a comment below if you want the project breakdown! 👇</textarea>
       });
     }
 
-    // REAL VISION API & DEMO SCAN SCANNER
+    // Dynamic mock pools so every click visibly changes the UI
+    const mockVariations = [
+      {
+        titles: [
+          "3 Editing Secrets That Quadrupled My Video Retention",
+          "How We Edit High-Converting Commercial Brand Films",
+          "The 3-Second Visual Hook Framework for Social Video"
+        ],
+        caption: "🎬 Stop losing viewers in the first 3 seconds! Here is our exact retention framework:\n\n1. Dynamic Visual Hook (0:00 - 0:02)\n2. Sound Design & Pacing\n3. High-Impact Call-to-Action",
+        tags: ["#viralreels2026", "#fbreels", "#trendingreels2026", "#youtubeshorts", "#filmmakingtok"]
+      },
+      {
+        titles: [
+          "Stop Making This Video Editing Mistake in 2026!",
+          "5 Quick Hacks for Viral YouTube Shorts & TikToks",
+          "Behind the Scenes: Cinematic Commercial Color Grading"
+        ],
+        caption: "🔥 Want higher CTR on your short-form videos? Implement these 3 color & pacing tricks on your next project!\n\nComment 'PRESET' for the full breakdown 👇",
+        tags: ["#videoediting", "#cinematography", "#contentcreator", "#aivideo", "#capcut"]
+      },
+      {
+        titles: [
+          "Why 90% of Social Videos Fail in the First 3 Seconds",
+          "Transform Raw Footage Into High-Converting Ad Clips",
+          "Commercial Director's Workflow for Maximum Engagement"
+        ],
+        caption: "⚡ Engagement drop-off usually happens immediately. Here is how we keep retention above 70% across YouTube & Meta channels.",
+        tags: ["#videomarketing", "#brandfilm", "#contentstrategy", "#digitalcreator", "#fbreels"]
+      }
+    ];
+
+    let variationIndex = 0;
+
     async function runAIVisionScan() {
-      const scanner = document.getElementById('ai-scanner-line');
       const scanState = document.getElementById('ai-scanning-state');
       const content = document.getElementById('ai-output-content');
       const badge = document.getElementById('ai-status-badge');
-      const apiKey = document.getElementById('api-key-input')?.value.trim();
+      const apiKeyInput = document.getElementById('api-key-input');
+      const apiKey = apiKeyInput ? apiKeyInput.value.trim() : '';
 
-      scanner.classList.remove('hidden');
+      // UI Scanning State
       scanState.classList.remove('hidden');
       content.classList.add('hidden');
       badge.className = "text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded animate-pulse";
-      badge.innerText = apiKey ? "Contacting Vision API..." : "Analyzing Media & Live Trends...";
+      badge.innerText = apiKey ? "Contacting Gemini API..." : "Analyzing Media...";
 
       try {
         if (apiKey && currentMediaFile && currentMediaFile.type.startsWith('image/')) {
-          // LIVE GEMINI VISION API CALL
+          // Live API Call
           const base64Data = await fileToBase64(currentMediaFile);
-          const mimeType = currentMediaFile.type;
-
           const promptText = `Act as an expert social video strategist. Analyze this image asset and return JSON ONLY matching this schema:
-{
-  "titles": ["Title option 1", "Title option 2", "Title option 3"],
-  "caption": "High-converting social caption with emojis and numbered hooks",
-  "tags": ["#tag1", "#tag2", "#tag3", "#tag4", "#tag5"]
-}`;
+{"titles": ["Title 1", "Title 2", "Title 3"], "caption": "Caption text", "tags": ["#tag1", "#tag2", "#tag3"]}`;
 
           const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
@@ -779,7 +791,7 @@ Drop a comment below if you want the project breakdown! 👇</textarea>
               contents: [{
                 parts: [
                   { text: promptText },
-                  { inline_data: { mime_type: mimeType, data: base64Data } }
+                  { inline_data: { mime_type: currentMediaFile.type, data: base64Data } }
                 ]
               }],
               generationConfig: { response_mime_type: "application/json" }
@@ -790,30 +802,23 @@ Drop a comment below if you want the project breakdown! 👇</textarea>
 
           const resultData = await response.json();
           const jsonText = resultData.candidates[0].content.parts[0].text;
-          const parsed = JSON.parse(jsonText);
-          renderAIScanResults(parsed);
+          renderAIScanResults(JSON.parse(jsonText));
+          badge.innerText = "Live API Scan Complete";
         } else {
-          // FALLBACK DEMO ENGINE
-          await new Promise(r => setTimeout(r, 1200));
-          renderAIScanResults({
-            titles: [
-              "3 Editing Secrets That Quadrupled My Video Retention",
-              "How We Edit High-Converting Brand Commercials",
-              "The 3-Second Retention Hook Strategy for Social Video"
-            ],
-            caption: "🎬 Stop losing viewers in the first 3 seconds! Here is the exact retention editing framework we use for commercial brand videos:\n\n1. Dynamic Visual Hook (0:00 - 0:02)\n2. Color Grading Pacing & Sound Design\n3. High-Impact Call-to-Action\n\nDrop a comment below if you want the project breakdown! 👇",
-            tags: ["#viralreels2026", "#fbreels", "#trendingreels2026", "#youtubeshorts", "#filmmakingtok", "#contentcreator"]
-          });
+          // Test Generator Mode: Cycle variations so every click produces new output
+          await new Promise(r => setTimeout(r, 800));
+          const variation = mockVariations[variationIndex % mockVariations.length];
+          variationIndex++;
+          renderAIScanResults(variation);
+          badge.innerText = apiKey ? "No Asset (Demo Mode)" : "Generated (Demo Mode)";
         }
 
         badge.className = "text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded";
-        badge.innerText = apiKey ? "Live API Scan Complete" : "Scan Complete";
       } catch (err) {
         console.error("AI Scan Error:", err);
         badge.className = "text-[10px] bg-red-500/20 text-red-300 border border-red-500/30 px-2 py-0.5 rounded";
-        badge.innerText = "API Error (Using Mock)";
+        badge.innerText = "Scan Failed";
       } finally {
-        scanner.classList.add('hidden');
         scanState.classList.add('hidden');
         content.classList.remove('hidden');
       }
