@@ -69,6 +69,10 @@
           fbFormat: 'feed',
           twitterEnabled: false,
           twitterFormat: 'media',
+
+          // Scheduling Controls
+          scheduledDate: '2026-09-18',
+          scheduledTime: '17:00',
           
           // Media Upload & Smart Vision State
           mediaFile: null,
@@ -79,6 +83,21 @@
           
           // Editable Caption & Dynamic Tags
           captionText: 'As the sun dips below the Atlantic horizon, our guests are treated to front-row seats. Who are you bringing on your next escape? 🌅✨',
+          
+          // Smart Content Bank Items (with delete support)
+          contentBankItems: [
+              { id: 1, name: 'Winter Fireplace Evening', type: 'image', url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=300', caption: 'Crackling fires and quiet evenings.' },
+              { id: 2, name: 'Patio Morning Coffee', type: 'image', url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=300', caption: 'Morning light and fresh ocean air.' },
+              { id: 3, name: 'Sunset Horizon View', type: 'image', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300', caption: 'As the sun dips below the Atlantic horizon.' }
+          ],
+
+          // Scheduled Posts for Calendar View
+          scheduledPosts: [
+              { id: 1, date: '2026-09-18', time: '17:00', title: 'Sunset Horizon View', platform: 'Instagram (Reel)', status: 'Queued' },
+              { id: 2, date: '2026-09-19', time: '09:00', title: 'Patio Morning Coffee', platform: 'Facebook (Feed)', status: 'Scheduled' },
+              { id: 3, date: '2026-09-21', time: '18:30', title: 'Winter Fireplace Evening', platform: 'Instagram (Feed)', status: 'Scheduled' },
+              { id: 4, date: '2026-09-24', time: '16:00', title: 'Coastal Walkway Drone Shot', platform: 'Instagram (Reel)', status: 'Scheduled' }
+          ],
           
           handleFile(file) {
               if (!file) return;
@@ -110,10 +129,39 @@
               this.captionText = 'Upload an image or video to generate a smart AI caption tailored to your media.';
           },
 
+          deleteContentItem(id) {
+              this.contentBankItems = this.contentBankItems.filter(item => item.id !== id);
+          },
+
+          addContentBankFile(file) {
+              if (!file) return;
+              const newItem = {
+                  id: Date.now(),
+                  name: file.name,
+                  type: file.type.startsWith('video') ? 'video' : 'image',
+                  url: URL.createObjectURL(file),
+                  caption: 'Smart AI analysis ready for planning.'
+              };
+              this.contentBankItems.unshift(newItem);
+          },
+
           appendTag(tag) {
               if (!this.captionText.includes(tag)) {
                   this.captionText = this.captionText.trim() + ' ' + tag;
               }
+          },
+
+          confirmPublish() {
+              this.scheduledPosts.push({
+                  id: Date.now(),
+                  date: this.scheduledDate,
+                  time: this.scheduledTime,
+                  title: this.mediaFile ? this.mediaFile.name : 'Custom Media Post',
+                  platform: (this.igEnabled ? 'Instagram ' : '') + (this.fbEnabled ? 'Facebook ' : ''),
+                  status: 'Queued'
+              });
+              this.publishedToast = true;
+              setTimeout(() => this.publishedToast = false, 3500);
           },
 
           runAudit() {
@@ -143,14 +191,18 @@
         </button>
     </header>
 
-    <!-- Main App Container (3-Tab Navigation) -->
+    <!-- Main App Container (4-Tab Navigation) -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col gap-6">
 
         <!-- Tab Bar -->
         <div class="flex border-b border-cardborder gap-8 text-sm font-medium">
             <button @click="currentTab = 'today'" :class="currentTab === 'today' ? 'border-blue-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-200'" class="pb-3 border-b-2 transition flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Today's Post
+                Today's Post & Studio
+            </button>
+            <button @click="currentTab = 'calendar'" :class="currentTab === 'calendar' ? 'border-blue-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-200'" class="pb-3 border-b-2 transition flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Calendar & Planning
             </button>
             <button @click="currentTab = 'insights'" :class="currentTab === 'insights' ? 'border-blue-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-200'" class="pb-3 border-b-2 transition flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
@@ -171,7 +223,7 @@
                             <span class="bg-blue-500/10 text-blue-400 text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-500/20 flex items-center gap-1.5">
                                 <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> Smart Vision AI Active
                             </span>
-                            <span class="text-xs text-slate-400">Scheduled for Today @ 17:00</span>
+                            <span class="text-xs text-slate-400">Exact Publish-Size Preview Mode</span>
                         </div>
                         <div class="bg-cardborder p-1 rounded-lg flex text-xs">
                             <button @click="lang = 'en'" :class="lang === 'en' ? 'bg-blue-600 text-white' : 'text-slate-400'" class="px-3 py-1 rounded-md transition font-medium">EN</button>
@@ -179,10 +231,13 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                        <!-- Functional Drag & Drop / File Upload Zone -->
-                        <div class="h-64 rounded-xl border-2 border-dashed transition relative group overflow-hidden flex flex-col items-center justify-center p-4 text-center"
-                             :class="isDragging ? 'border-blue-500 bg-blue-500/10' : 'border-cardborder hover:border-blue-500 bg-darkbg/40'"
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                        <!-- Functional Drag & Drop with Exact Publish Aspect Ratio Preview -->
+                        <div class="rounded-xl border-2 border-dashed transition relative group overflow-hidden flex flex-col items-center justify-center p-2 text-center bg-darkbg/40"
+                             :class="[
+                                isDragging ? 'border-blue-500 bg-blue-500/10' : 'border-cardborder hover:border-blue-500',
+                                igFormat === 'reel' || igFormat === 'story' ? 'aspect-[9/16] max-h-[360px] mx-auto w-full' : 'aspect-square max-h-[320px] mx-auto w-full'
+                             ]"
                              @dragover.prevent="isDragging = true"
                              @dragleave.prevent="isDragging = false"
                              @drop.prevent="isDragging = false; handleFile($event.dataTransfer.files[0])">
@@ -195,15 +250,17 @@
                                 </div>
                             </template>
 
-                            <!-- State B: File Loaded Preview -->
+                            <!-- State B: File Loaded Preview (Exact Publish Size) -->
                             <template x-if="mediaPreviewUrl && !isAnalyzing">
-                                <div class="absolute inset-0 w-full h-full bg-darkbg flex items-center justify-center">
+                                <div class="absolute inset-0 w-full h-full bg-darkbg flex items-center justify-center overflow-hidden rounded-xl">
                                     <template x-if="mediaType === 'image'">
                                         <img :src="mediaPreviewUrl" class="w-full h-full object-cover">
                                     </template>
                                     <template x-if="mediaType === 'video'">
                                         <video :src="mediaPreviewUrl" class="w-full h-full object-cover" autoplay muted loop></video>
                                     </template>
+                                    <!-- Format Badge Overlay -->
+                                    <span class="absolute top-2 left-2 bg-black/70 backdrop-blur-md text-[10px] text-white px-2 py-0.5 rounded uppercase font-semibold tracking-wider" x-text="igFormat"></span>
                                     <!-- Remove / Change Button Overlay -->
                                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-2 p-4">
                                         <p class="text-xs font-semibold text-white truncate max-w-[200px]" x-text="mediaFile ? mediaFile.name : 'Media Loaded'"></p>
@@ -214,12 +271,12 @@
                                 </div>
                             </template>
 
-                            <!-- State C: Empty Drop Zone with exact requested text -->
+                            <!-- State C: Empty Drop Zone -->
                             <template x-if="!mediaPreviewUrl && !isAnalyzing">
-                                <div class="flex flex-col items-center justify-center cursor-pointer w-full h-full">
+                                <div class="flex flex-col items-center justify-center cursor-pointer w-full h-full p-4">
                                     <svg class="w-10 h-10 text-slate-500 mb-2 group-hover:text-blue-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                                     <p class="text-xs font-semibold text-slate-200">drag/drop image/video here</p>
-                                    <p class="text-[10px] text-slate-500 mt-1">Supports JPG, PNG, MP4, MOV, WEBM</p>
+                                    <p class="text-[10px] text-slate-500 mt-1" x-text="'Previewing as ' + igFormat.toUpperCase() + ' (Exact Size)'"></p>
                                 </div>
                             </template>
 
@@ -227,31 +284,35 @@
                             <input type="file" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/png,image/jpeg,image/jpg,video/mp4,video/quicktime,video/webm" @change="handleFile($event.target.files[0])">
                         </div>
 
-                        <!-- Editable Caption & Dynamic Tags -->
+                        <!-- Editable Caption & Expanded Clickable Tags -->
                         <div class="flex flex-col gap-3">
                             <div class="flex justify-between items-center">
                                 <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">AI Description & Caption</label>
                                 <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Editable</span>
                             </div>
-                            <textarea x-model="captionText" rows="5" class="w-full bg-cardborder/40 border border-cardborder rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed focus:outline-none focus:border-blue-500 resize-none"></textarea>
+                            <textarea x-model="captionText" rows="4" class="w-full bg-cardborder/40 border border-cardborder rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed focus:outline-none focus:border-blue-500 resize-none"></textarea>
                             
-                            <!-- Clickable Suggested Tags (Clicks append instantly) -->
-                            <div class="flex flex-wrap gap-1.5 pt-1">
-                                <span @click="appendTag('#CoastalEscape')" class="text-[11px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-blue-500/20 transition">+ #CoastalEscape</span>
-                                <span @click="appendTag('#SunsetViews')" class="text-[11px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-emerald-500/20 transition">+ #SunsetViews</span>
-                                <span @click="appendTag('#WeekendVibes')" class="text-[11px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-purple-500/20 transition">+ #WeekendVibes</span>
-                                <span @click="appendTag('#SeasideLiving')" class="text-[11px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-amber-500/20 transition">+ #SeasideLiving</span>
+                            <!-- Expanded Clickable Tags (Clicks append instantly) -->
+                            <div>
+                                <span class="text-[10px] text-slate-400 block mb-1 uppercase font-semibold">Suggested Tags (Click to append):</span>
+                                <div class="flex flex-wrap gap-1.5 max-h-[110px] overflow-y-auto pr-1">
+                                    <span @click="appendTag('#CoastalEscape')" class="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-blue-500/20 transition">+ #CoastalEscape</span>
+                                    <span @click="appendTag('#SunsetViews')" class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-emerald-500/20 transition">+ #SunsetViews</span>
+                                    <span @click="appendTag('#WeekendVibes')" class="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-purple-500/20 transition">+ #WeekendVibes</span>
+                                    <span @click="appendTag('#SeasideLiving')" class="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-amber-500/20 transition">+ #SeasideLiving</span>
+                                    <span @click="appendTag('#LuxuryStay')" class="text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-indigo-500/20 transition">+ #LuxuryStay</span>
+                                    <span @click="appendTag('#WeekendGetaway')" class="text-[10px] bg-teal-500/10 text-teal-400 border border-teal-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-teal-500/20 transition">+ #WeekendGetaway</span>
+                                    <span @click="appendTag('#OceanBreeze')" class="text-[10px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-sky-500/20 transition">+ #OceanBreeze</span>
+                                    <span @click="appendTag('#CozyVibes')" class="text-[10px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-rose-500/20 transition">+ #CozyVibes</span>
+                                    <span @click="appendTag('#TravelSA')" class="text-[10px] bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-orange-500/20 transition">+ #TravelSA</span>
+                                    <span @click="appendTag('#HiddenGem')" class="text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-cyan-500/20 transition">+ #HiddenGem</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-6 pt-4 border-t border-cardborder flex flex-col gap-4">
-                    <div class="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 rounded-lg">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <span><strong>Smart Vision Note:</strong> Image analysis parses visual composition to match your core audience preferences without making false location assumptions.</span>
-                    </div>
-
                     <!-- Platform Toggle & Format Configuration Panel -->
                     <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl space-y-3">
                         <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">Platform Toggles & Format Configuration</span>
@@ -264,9 +325,9 @@
                                     <span class="text-slate-200 font-medium">Instagram</span>
                                 </div>
                                 <select x-model="igFormat" :disabled="!igEnabled" :class="!igEnabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 focus:outline-none focus:border-blue-500 text-xs transition">
-                                    <option value="reel">Reel</option>
-                                    <option value="feed">Feed Post</option>
-                                    <option value="story">Story</option>
+                                    <option value="reel">Reel (9:16)</option>
+                                    <option value="feed">Feed (1:1)</option>
+                                    <option value="story">Story (9:16)</option>
                                 </select>
                             </div>
 
@@ -298,48 +359,133 @@
                         </div>
                     </div>
 
+                    <!-- Day & Time Scheduling Bar -->
+                    <div class="bg-cardborder/30 border border-cardborder p-3.5 rounded-xl flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+                        <div class="flex items-center gap-2 text-slate-300 font-medium">
+                            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <span>Schedule Publish Date & Time:</span>
+                        </div>
+                        <div class="flex items-center gap-2 w-full md:w-auto">
+                            <input type="date" x-model="scheduledDate" class="bg-darkbg text-slate-200 border border-cardborder rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500 text-xs">
+                            <input type="time" x-model="scheduledTime" class="bg-darkbg text-slate-200 border border-cardborder rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500 text-xs">
+                        </div>
+                    </div>
+
                     <div class="flex justify-between items-center">
-                        <span class="text-xs text-slate-400">Publishes only to selected and enabled networks.</span>
-                        <button @click="publishedToast = true; setTimeout(() => publishedToast = false, 3500)" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition shadow-lg shadow-blue-600/30 flex items-center gap-2">
+                        <span class="text-xs text-slate-400">Publishes automatically to selected networks at scheduled time.</span>
+                        <button @click="confirmPublish()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition shadow-lg shadow-blue-600/30 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            Confirm & Publish Now
+                            Confirm & Schedule Post
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Content Bank Sidebar -->
+            <!-- Content Bank Sidebar with exact requested text & delete support -->
             <div class="glass-panel rounded-2xl p-6 flex flex-col gap-4">
                 <div class="flex justify-between items-center">
                     <h2 class="font-bold text-sm text-white">Smart Content Bank</h2>
-                    <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">24 Cached</span>
+                    <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md" x-text="contentBankItems.length + ' Cached'"></span>
                 </div>
-                <p class="text-xs text-slate-400">AI auto-suggests top-performing seasonal assets based on visual feature extraction.</p>
-                <div class="flex-1 overflow-y-auto space-y-3 max-h-[380px] pr-1">
-                    <div @click="handleFile({ name: 'fire_evening.jpg', type: 'image/jpeg' })" class="bg-cardborder/40 border border-cardborder rounded-xl p-2.5 flex items-center gap-3 cursor-pointer hover:border-blue-500/50 transition">
-                        <div class="w-12 h-12 rounded-lg bg-cover bg-center shrink-0" style="background-image: url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=100')"></div>
-                        <div class="overflow-hidden">
-                            <p class="text-xs font-semibold text-slate-200 truncate">Winter Fireplace Evening</p>
-                            <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded mt-1 inline-block">High Engagement</span>
-                        </div>
-                    </div>
-                    <div @click="handleFile({ name: 'coffee_morning.jpg', type: 'image/jpeg' })" class="bg-cardborder/40 border border-cardborder rounded-xl p-2.5 flex items-center gap-3 cursor-pointer hover:border-blue-500/50 transition">
-                        <div class="w-12 h-12 rounded-lg bg-cover bg-center shrink-0" style="background-image: url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=100')"></div>
-                        <div class="overflow-hidden">
-                            <p class="text-xs font-semibold text-slate-200 truncate">Patio Morning Coffee</p>
-                            <span class="text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded mt-1 inline-block">Top Weekend Reach</span>
-                        </div>
-                    </div>
-                </div>
-                <label class="border-2 border-dashed border-cardborder hover:border-blue-500 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer transition bg-cardborder/20">
-                    <span class="text-xs text-slate-300 font-semibold">+ Drop New Photo Here</span>
-                    <span class="text-[10px] text-slate-500 mt-0.5">Instant Smart Vision Analysis</span>
-                    <input type="file" class="hidden" accept="image/*,video/*" @change="handleFile($event.target.files[0])">
+                
+                <!-- Exact requested wording for drop zone -->
+                <label class="border-2 border-dashed border-cardborder hover:border-blue-500 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer transition bg-cardborder/20 text-center">
+                    <span class="text-xs text-slate-200 font-semibold">drop your photo/videos here for easy access and weekly planning</span>
+                    <span class="text-[10px] text-blue-400 mt-1">Instant Smart Vision Analysis</span>
+                    <input type="file" class="hidden" accept="image/*,video/*" @change="addContentBankFile($event.target.files[0])">
                 </label>
+
+                <!-- Scrollable Content Bank List with Delete Buttons -->
+                <div class="flex-1 overflow-y-auto space-y-3 max-h-[420px] pr-1">
+                    <template x-for="item in contentBankItems" :key="item.id">
+                        <div class="bg-cardborder/40 border border-cardborder rounded-xl p-2.5 flex items-center justify-between group hover:border-blue-500/50 transition">
+                            <div @click="handleFile({ name: item.name, type: item.type === 'video' ? 'video/mp4' : 'image/jpeg' })" class="flex items-center gap-3 cursor-pointer overflow-hidden flex-1">
+                                <div class="w-12 h-12 rounded-lg bg-cover bg-center shrink-0" :style="'background-image: url(\'' + item.url + '\')'"></div>
+                                <div class="overflow-hidden">
+                                    <p class="text-xs font-semibold text-slate-200 truncate" x-text="item.name"></p>
+                                    <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded mt-1 inline-block">Ready to Load</span>
+                                </div>
+                            </div>
+                            <!-- Delete Button -->
+                            <button @click="deleteContentItem(item.id)" title="Delete element" class="text-slate-500 hover:text-red-400 p-2 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </div>
+                    </template>
+                </div>
             </div>
         </div>
 
-        <!-- TAB 2: INSIGHTS & PULSE -->
+        <!-- TAB 2: CALENDAR & PLANNING VIEW -->
+        <div x-show="currentTab === 'calendar'" class="glass-panel rounded-2xl p-6 flex flex-col gap-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-cardborder pb-4">
+                <div>
+                    <h2 class="font-bold text-base text-white">Content Planning Calendar (September 2026)</h2>
+                    <p class="text-xs text-slate-400">View and manage all scheduled hospitality posts across platforms.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-3 py-1.5 rounded-lg font-semibold" x-text="scheduledPosts.length + ' Total Scheduled Posts'"></span>
+                    <button @click="currentTab = 'today'" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
+                        + Schedule New Post
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scheduled Posts Table / List View -->
+            <div class="space-y-3">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Upcoming Queue</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <template x-for="post in scheduledPosts" :key="post.id">
+                        <div class="bg-cardborder/40 border border-cardborder rounded-xl p-4 flex flex-col justify-between gap-3 relative group">
+                            <div class="space-y-1">
+                                <div class="flex justify-between items-start">
+                                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-semibold" x-text="post.status"></span>
+                                    <span class="text-[11px] text-blue-400 font-bold" x-text="post.date"></span>
+                                </div>
+                                <h4 class="text-xs font-bold text-white truncate pt-1" x-text="post.title"></h4>
+                                <p class="text-[11px] text-slate-400" x-text="'Platform: ' + post.platform"></p>
+                            </div>
+                            <div class="flex justify-between items-center pt-2 border-t border-cardborder/60 text-[11px]">
+                                <span class="text-slate-300 font-medium" x-text="'🕒 ' + post.time"></span>
+                                <button @click="scheduledPosts = scheduledPosts.filter(p => p.id !== post.id)" class="text-red-400 hover:underline">Cancel / Delete</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Visual Monthly Calendar Grid Simulation -->
+            <div class="mt-4 pt-4 border-t border-cardborder">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">September 2026 Grid Overview</h3>
+                <div class="grid grid-cols-7 gap-2 text-center text-xs">
+                    <!-- Weekdays -->
+                    <div class="text-slate-500 font-bold py-1">Mon</div>
+                    <div class="text-slate-500 font-bold py-1">Tue</div>
+                    <div class="text-slate-500 font-bold py-1">Wed</div>
+                    <div class="text-slate-500 font-bold py-1">Thu</div>
+                    <div class="text-slate-500 font-bold py-1">Fri</div>
+                    <div class="text-slate-500 font-bold py-1">Sat</div>
+                    <div class="text-slate-500 font-bold py-1">Sun</div>
+
+                    <!-- Days 1-30 -->
+                    <template x-for="day in 30">
+                        <div class="bg-cardborder/20 border border-cardborder/50 rounded-lg p-2 min-h-[70px] flex flex-col justify-between text-left relative"
+                             :class="day === 18 ? 'border-blue-500 bg-blue-500/10' : ''">
+                            <span class="text-[11px] font-semibold" :class="day === 18 ? 'text-blue-400' : 'text-slate-400'" x-text="day"></span>
+                            
+                            <!-- Indicators for scheduled days -->
+                            <template x-if="day === 18 || day === 19 || day === 21 || day === 24">
+                                <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1 rounded truncate font-medium">
+                                    <span x-text="day === 18 ? 'Sunset Reel' : (day === 19 ? 'Coffee' : (day === 21 ? 'Fireplace' : 'Drone'))"></span>
+                                </span>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: INSIGHTS & PULSE -->
         <div x-show="currentTab === 'insights'" class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
                 <div>
@@ -367,7 +513,7 @@
             </div>
         </div>
 
-        <!-- TAB 3: WHATSAPP CO-PILOT SIMULATOR -->
+        <!-- TAB 4: WHATSAPP CO-PILOT SIMULATOR -->
         <div x-show="currentTab === 'whatsapp'" class="glass-panel rounded-2xl p-6 max-w-3xl mx-auto w-full flex flex-col gap-4">
             <div class="flex items-center justify-between border-b border-cardborder pb-4">
                 <div class="flex items-center gap-3">
@@ -563,7 +709,7 @@
     <!-- Published Success Toast -->
     <div x-show="publishedToast" x-transition class="fixed bottom-6 right-6 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        Post confirmed and queued for distribution to enabled networks!
+        Post confirmed and scheduled successfully!
     </div>
 
 </body>
