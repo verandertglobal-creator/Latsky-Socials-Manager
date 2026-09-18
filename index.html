@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Latsky Socials Manager | Hospitality AI Co-Pilot</title>
+    <title>Latsky Socials Manager | Multi-Brand Hospitality AI Co-Pilot</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -56,27 +56,44 @@
           currentTab: 'today', 
           auditModalOpen: false, 
           accountModalOpen: false,
+          loginModalOpen: false,
           auditStep: 'input', 
           
-          // Company & Linked Accounts State
-          companyName: 'Paternoster Seaside Cottages',
-          igAccount: '@paternoster_cottages',
-          fbAccount: 'facebook.com/paternosterseaside',
-          tiktokAccount: '@paternoster_stays',
+          // Authentication & Company Profile
+          isLoggedIn: true,
+          companyName: 'Latsky Multimedia Hospitality',
+          userEmail: 'johann@latskymultimedia.co.za',
+          
+          // Separate Platform Connection States & Credentials
+          fbConnected: true,
+          fbPageName: 'Latsky Media & Stays',
+          fbPageId: 'fb_page_9823410',
+          fbToken: 'EAAQt_FB_TOKEN_LIVE_9812',
+          fbConnecting: false,
+
+          igConnected: true,
+          igAccount: '@latsky_stays',
+          igBusinessId: '178414998231',
+          igToken: 'EAAQt_IG_TOKEN_LIVE_4412',
+          igConnecting: false,
+
+          ytConnected: false,
+          ytChannelName: '',
+          ytApiKey: '',
+          ytConnecting: false,
+
+          twitterConnected: false,
+          twitterHandle: '',
+          twitterToken: '',
+          twitterConnecting: false,
+
           whatsappNumber: '+27 82 555 0192',
           accountConnectedToast: false,
+          loginToast: false,
 
-          // Live API Credentials State
-          metaAccessToken: '',
-          igBusinessId: '',
-          youtubeApiKey: '',
-          useLiveApi: false,
-          isOAuthConnecting: false,
-          oauthSuccessToast: false,
-
-          igInput: '@paternoster_cottages', 
-          fbInput: 'facebook.com/paternosterseaside', 
-          gbpInput: 'Paternoster Seaside Cottages', 
+          igInput: '@latsky_stays', 
+          fbInput: 'Latsky Media & Stays', 
+          gbpInput: 'Latsky Multimedia', 
           lang: 'en', 
           publishedToast: false,
           
@@ -99,7 +116,6 @@
           isDragging: false,
           isAnalyzing: false,
           
-          // Editable Caption & Dynamic Tags
           captionText: 'As the sun dips below the Atlantic horizon, our guests are treated to front-row seats. Who are you bringing on your next escape? 🌅✨',
           
           // Smart Content Bank Items
@@ -109,8 +125,132 @@
               { id: 3, name: 'Sunset Horizon View', type: 'image', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300', caption: 'As the sun dips below the Atlantic horizon.' }
           ],
 
-          // Scheduled Posts
           scheduledPosts: [],
+          
+          init() {
+              // Load saved session if available in localStorage
+              const savedProfile = localStorage.getItem('latsky_social_profile');
+              if (savedProfile) {
+                  try {
+                      const data = JSON.parse(savedProfile);
+                      this.companyName = data.companyName || this.companyName;
+                      this.userEmail = data.userEmail || this.userEmail;
+                      this.fbConnected = data.fbConnected ?? this.fbConnected;
+                      this.fbPageName = data.fbPageName || this.fbPageName;
+                      this.igConnected = data.igConnected ?? this.igConnected;
+                      this.igAccount = data.igAccount || this.igAccount;
+                      this.ytConnected = data.ytConnected ?? this.ytConnected;
+                      this.ytChannelName = data.ytChannelName || this.ytChannelName;
+                      this.twitterConnected = data.twitterConnected ?? this.twitterConnected;
+                      this.twitterHandle = data.twitterHandle || this.twitterHandle;
+                      this.isLoggedIn = data.isLoggedIn ?? this.isLoggedIn;
+                  } catch(e) { console.error('Error loading session', e); }
+              }
+          },
+
+          saveSession() {
+              const data = {
+                  companyName: this.companyName,
+                  userEmail: this.userEmail,
+                  fbConnected: this.fbConnected,
+                  fbPageName: this.fbPageName,
+                  igConnected: this.igConnected,
+                  igAccount: this.igAccount,
+                  ytConnected: this.ytConnected,
+                  ytChannelName: this.ytChannelName,
+                  twitterConnected: this.twitterConnected,
+                  twitterHandle: this.twitterHandle,
+                  isLoggedIn: this.isLoggedIn
+              };
+              localStorage.setItem('latsky_social_profile', JSON.stringify(data));
+          },
+
+          logout() {
+              this.isLoggedIn = false;
+              this.saveSession();
+              this.loginModalOpen = true;
+          },
+
+          login() {
+              if (!this.companyName.trim()) {
+                  alert('Please enter your company or brand name.');
+                  return;
+              }
+              this.isLoggedIn = true;
+              this.loginModalOpen = false;
+              this.saveSession();
+              this.loginToast = true;
+              setTimeout(() => this.loginToast = false, 3500);
+          },
+
+          // Separate Connect Flow for Facebook
+          connectFacebook() {
+              this.fbConnecting = true;
+              setTimeout(() => {
+                  this.fbConnecting = false;
+                  this.fbConnected = true;
+                  this.fbToken = 'EAAQt_FB_LIVE_' + Math.random().toString(36).substring(7);
+                  this.saveSession();
+              }, 1200);
+          },
+
+          disconnectFacebook() {
+              this.fbConnected = false;
+              this.fbToken = '';
+              this.saveSession();
+          },
+
+          // Separate Connect Flow for Instagram Business
+          connectInstagram() {
+              this.igConnecting = true;
+              setTimeout(() => {
+                  this.igConnecting = false;
+                  this.igConnected = true;
+                  this.igToken = 'EAAQt_IG_LIVE_' + Math.random().toString(36).substring(7);
+                  this.igBusinessId = '17841499' + Math.floor(10000 + Math.random() * 90000);
+                  this.saveSession();
+              }, 1200);
+          },
+
+          disconnectInstagram() {
+              this.igConnected = false;
+              this.igToken = '';
+              this.saveSession();
+          },
+
+          // Separate Connect Flow for YouTube
+          connectYouTube() {
+              this.ytConnecting = true;
+              setTimeout(() => {
+                  this.ytConnecting = false;
+                  this.ytConnected = true;
+                  this.ytApiKey = 'AIzaSy' + Math.random().toString(36).substring(2, 15);
+                  this.saveSession();
+              }, 1200);
+          },
+
+          disconnectYouTube() {
+              this.ytConnected = false;
+              this.ytApiKey = '';
+              this.saveSession();
+          },
+
+          // Separate Connect Flow for Twitter/X
+          connectTwitter() {
+              this.twitterConnecting = true;
+              setTimeout(() => {
+                  this.twitterConnecting = false;
+                  this.twitterConnected = true;
+                  this.twitterToken = 'TW_LIVE_' + Math.random().toString(36).substring(7);
+                  this.saveSession();
+              }, 1200);
+          },
+
+          disconnectTwitter() {
+              this.twitterConnected = false;
+              this.twitterToken = '';
+              this.saveSession();
+          },
           
           handleFile(file) {
               if (!file) return;
@@ -169,7 +309,7 @@
                   date: this.scheduledDate,
                   time: this.scheduledTime,
                   title: this.mediaFile ? this.mediaFile.name : 'Custom Media Post',
-                  platform: (this.igEnabled ? 'Instagram ' : '') + (this.fbEnabled ? 'Facebook ' : ''),
+                  platform: (this.igEnabled && this.igConnected ? 'Instagram ' : '') + (this.fbEnabled && this.fbConnected ? 'Facebook ' : ''),
                   status: 'Queued'
               });
               this.publishedToast = true;
@@ -178,22 +318,9 @@
 
           saveAccounts() {
               this.accountModalOpen = false;
+              this.saveSession();
               this.accountConnectedToast = true;
               setTimeout(() => this.accountConnectedToast = false, 3500);
-          },
-
-          // Simulate Secure OAuth Connection from Page Handle
-          simulateOAuthConnect() {
-              this.isOAuthConnecting = true;
-              setTimeout(() => {
-                  this.isOAuthConnecting = false;
-                  this.useLiveApi = true;
-                  this.metaAccessToken = 'EAAQt_LIVE_TOKEN_VERIFIED_' + Math.random().toString(36).substring(7);
-                  this.igBusinessId = '17841499' + Math.floor(10000 + Math.random() * 90000);
-                  this.youtubeApiKey = 'AIzaSy' + Math.random().toString(36).substring(2, 15);
-                  this.oauthSuccessToast = true;
-                  setTimeout(() => this.oauthSuccessToast = false, 4000);
-              }, 1500);
           },
 
           runAudit() {
@@ -212,14 +339,14 @@
             </div>
             <div>
                 <h1 class="font-bold text-base text-white tracking-wide" x-text="companyName"></h1>
-                <p class="text-xs text-slate-400">Latsky Socials Manager • Connected to <span class="text-emerald-400 font-medium" x-text="igAccount"></span></p>
+                <p class="text-xs text-slate-400">Latsky Socials Co-Pilot • IG: <span class="text-emerald-400 font-medium" x-text="igConnected ? igAccount : 'Not Connected'"></span></p>
             </div>
         </div>
 
         <div class="flex items-center gap-3">
             <button @click="accountModalOpen = true" class="px-4 py-2 rounded-full bg-blue-600/20 text-blue-400 font-semibold text-xs tracking-wider uppercase border border-blue-500/30 flex items-center gap-2 hover:bg-blue-600/30 transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-                Link Accounts & Company
+                Social Accounts Hub & Login
             </button>
             <button @click="auditModalOpen = true; auditStep = 'input'" class="glow-button px-4 py-2 rounded-full bg-slate-900 text-white font-semibold text-xs tracking-wider uppercase border border-white/10 flex items-center gap-2 hover:scale-105 active:scale-95 transition">
                 <svg class="w-4 h-4 text-emerald-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -260,7 +387,7 @@
                             <span class="bg-blue-500/10 text-blue-400 text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-500/20 flex items-center gap-1.5">
                                 <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> Smart Vision AI Active
                             </span>
-                            <span class="text-xs text-slate-400">Exact Publish-Size Preview Mode</span>
+                            <span class="text-xs text-slate-400">Publishing for: <strong class="text-white" x-text="companyName"></strong></span>
                         </div>
                         <div class="bg-cardborder p-1 rounded-lg flex text-xs">
                             <button @click="lang = 'en'" :class="lang === 'en' ? 'bg-blue-600 text-white' : 'text-slate-400'" class="px-3 py-1 rounded-md transition font-medium">EN</button>
@@ -342,38 +469,47 @@
 
                 <div class="mt-6 pt-4 border-t border-cardborder flex flex-col gap-4">
                     <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl space-y-3">
-                        <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">Publishing to Linked Account: <strong class="text-emerald-400" x-text="igAccount"></strong></span>
+                        <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">Publishing to Linked Accounts</span>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2.5 rounded-lg border border-cardborder">
+                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2.5 rounded-lg border border-cardborder" :class="!igConnected ? 'opacity-50' : ''">
                                 <div class="flex items-center gap-2">
-                                    <input type="checkbox" x-model="igEnabled" class="rounded bg-cardbg border-cardborder text-blue-600 focus:ring-0 cursor-pointer">
-                                    <span class="text-slate-200 font-medium">Instagram</span>
+                                    <input type="checkbox" x-model="igEnabled" :disabled="!igConnected" class="rounded bg-cardbg border-cardborder text-blue-600 focus:ring-0 cursor-pointer">
+                                    <div>
+                                        <span class="text-slate-200 font-medium block">Instagram</span>
+                                        <span class="text-[10px] text-emerald-400" x-text="igConnected ? igAccount : 'Not Connected'"></span>
+                                    </div>
                                 </div>
-                                <select x-model="igFormat" :disabled="!igEnabled" :class="!igEnabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 focus:outline-none focus:border-blue-500 text-xs transition">
+                                <select x-model="igFormat" :disabled="!igEnabled || !igConnected" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 text-xs">
                                     <option value="reel">Reel (9:16)</option>
                                     <option value="feed">Feed (1:1)</option>
                                     <option value="story">Story (9:16)</option>
                                 </select>
                             </div>
 
-                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2.5 rounded-lg border border-cardborder">
+                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2.5 rounded-lg border border-cardborder" :class="!fbConnected ? 'opacity-50' : ''">
                                 <div class="flex items-center gap-2">
-                                    <input type="checkbox" x-model="fbEnabled" class="rounded bg-cardbg border-cardborder text-blue-600 focus:ring-0 cursor-pointer">
-                                    <span class="text-slate-200 font-medium">Facebook</span>
+                                    <input type="checkbox" x-model="fbEnabled" :disabled="!fbConnected" class="rounded bg-cardbg border-cardborder text-blue-600 focus:ring-0 cursor-pointer">
+                                    <div>
+                                        <span class="text-slate-200 font-medium block">Facebook</span>
+                                        <span class="text-[10px] text-emerald-400" x-text="fbConnected ? fbPageName : 'Not Connected'"></span>
+                                    </div>
                                 </div>
-                                <select x-model="fbFormat" :disabled="!fbEnabled" :class="!fbEnabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 focus:outline-none focus:border-blue-500 text-xs transition">
+                                <select x-model="fbFormat" :disabled="!fbEnabled || !fbConnected" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 text-xs">
                                     <option value="feed">Feed Post</option>
                                     <option value="story">Story</option>
                                     <option value="reel">Reel</option>
                                 </select>
                             </div>
 
-                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2.5 rounded-lg border border-cardborder">
+                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2.5 rounded-lg border border-cardborder" :class="!twitterConnected ? 'opacity-50' : ''">
                                 <div class="flex items-center gap-2">
-                                    <input type="checkbox" x-model="twitterEnabled" class="rounded bg-cardbg border-cardborder text-blue-600 focus:ring-0 cursor-pointer">
-                                    <span class="text-slate-200 font-medium">Twitter / X</span>
+                                    <input type="checkbox" x-model="twitterEnabled" :disabled="!twitterConnected" class="rounded bg-cardbg border-cardborder text-blue-600 focus:ring-0 cursor-pointer">
+                                    <div>
+                                        <span class="text-slate-200 font-medium block">Twitter / X</span>
+                                        <span class="text-[10px] text-emerald-400" x-text="twitterConnected ? twitterHandle : 'Not Connected'"></span>
+                                    </div>
                                 </div>
-                                <select x-model="twitterFormat" :disabled="!twitterEnabled" :class="!twitterEnabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 focus:outline-none focus:border-blue-500 text-xs transition">
+                                <select x-model="twitterFormat" :disabled="!twitterEnabled || !twitterConnected" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 text-xs">
                                     <option value="media">Media Tweet</option>
                                     <option value="post">Standard Tweet</option>
                                 </select>
@@ -544,7 +680,7 @@
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold">WA</div>
                     <div>
-                        <h2 class="font-bold text-sm text-white">Latsky Socials WhatsApp Assistant</h2>
+                        <h2 class="font-bold text-sm text-white" x-text="companyName + ' WhatsApp Assistant'"></h2>
                         <p class="text-xs text-emerald-400 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Online • Zero-Friction Mode</p>
                     </div>
                 </div>
@@ -565,52 +701,175 @@
 
     </main>
 
-    <!-- LINK ACCOUNTS MODAL -->
+    <!-- SOCIAL ACCOUNTS HUB & LOGIN MODAL -->
     <div x-show="accountModalOpen" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4" x-transition>
-        <div class="glass-panel bg-cardbg border border-cardborder rounded-2xl max-w-lg w-full p-6 relative shadow-2xl" @click.outside="accountModalOpen = false">
+        <div class="glass-panel bg-cardbg border border-cardborder rounded-2xl max-w-2xl w-full p-6 relative shadow-2xl max-h-[90vh] overflow-y-auto" @click.outside="accountModalOpen = false">
             <button @click="accountModalOpen = false" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">&times;</button>
             
-            <div class="space-y-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold">🔗</div>
+            <div class="space-y-5">
+                <div class="flex items-center justify-between border-b border-cardborder pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold">👤</div>
+                        <div>
+                            <h3 class="font-bold text-base text-white">Social Accounts Hub & Company Profile</h3>
+                            <p class="text-xs text-slate-400">Manage your business session and connect each platform separately.</p>
+                        </div>
+                    </div>
+                    <button @click="logout(); accountModalOpen = false" class="bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+                        Logout Session
+                    </button>
+                </div>
+
+                <div class="space-y-3 text-xs">
                     <div>
-                        <h3 class="font-bold text-base text-white">Link Your Accounts & Company Name</h3>
-                        <p class="text-xs text-slate-400">Connect your brand so scheduled posts publish directly to your live feeds.</p>
+                        <label class="font-semibold text-slate-300 block mb-1">Company / Brand Name (Required)</label>
+                        <input type="text" x-model="companyName" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500 text-xs">
                     </div>
                 </div>
 
-                <div class="space-y-3 pt-2 text-xs">
-                    <div>
-                        <label class="font-semibold text-slate-300 block mb-1">Company / Property Name</label>
-                        <input type="text" x-model="companyName" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                <!-- SEPARATE PLATFORM CONNECTION CARDS -->
+                <div class="space-y-3 pt-2">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300">Connect Social Platforms Separately</h4>
+                    
+                    <!-- 1. Instagram Business -->
+                    <div class="bg-cardborder/40 border border-cardborder rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-white text-xs">Instagram Business</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded font-semibold" :class="igConnected ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400'" x-text="igConnected ? 'Connected' : 'Disconnected'"></span>
+                            </div>
+                            <input type="text" x-model="igAccount" placeholder="@your_handle" class="bg-darkbg text-xs text-slate-200 border border-cardborder rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <template x-if="!igConnected">
+                                <button @click="connectInstagram()" :disabled="igConnecting" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-2">
+                                    <template x-if="igConnecting"><div class="w-3 h-3 rounded-full border-2 border-white border-t-transparent animate-spin"></div></template>
+                                    <span x-text="igConnecting ? 'Connecting...' : 'Connect Instagram'"></span>
+                                </button>
+                            </template>
+                            <template x-if="igConnected">
+                                <button @click="disconnectInstagram()" class="bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white text-xs font-semibold px-4 py-2 rounded-xl transition">
+                                    Disconnect
+                                </button>
+                            </template>
+                        </div>
                     </div>
-                    <div>
-                        <label class="font-semibold text-slate-300 block mb-1">Instagram Account Handle / Link</label>
-                        <input type="text" x-model="igAccount" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500">
+
+                    <!-- 2. Facebook Page -->
+                    <div class="bg-cardborder/40 border border-cardborder rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-white text-xs">Facebook Business Page</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded font-semibold" :class="fbConnected ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400'" x-text="fbConnected ? 'Connected' : 'Disconnected'"></span>
+                            </div>
+                            <input type="text" x-model="fbPageName" placeholder="Page Name or URL" class="bg-darkbg text-xs text-slate-200 border border-cardborder rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <template x-if="!fbConnected">
+                                <button @click="connectFacebook()" :disabled="fbConnecting" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-2">
+                                    <template x-if="fbConnecting"><div class="w-3 h-3 rounded-full border-2 border-white border-t-transparent animate-spin"></div></template>
+                                    <span x-text="fbConnecting ? 'Connecting...' : 'Connect Facebook'"></span>
+                                </button>
+                            </template>
+                            <template x-if="fbConnected">
+                                <button @click="disconnectFacebook()" class="bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white text-xs font-semibold px-4 py-2 rounded-xl transition">
+                                    Disconnect
+                                </button>
+                            </template>
+                        </div>
                     </div>
-                    <div>
-                        <label class="font-semibold text-slate-300 block mb-1">Facebook Page Link</label>
-                        <input type="text" x-model="fbAccount" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500">
+
+                    <!-- 3. YouTube Data API -->
+                    <div class="bg-cardborder/40 border border-cardborder rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-white text-xs">YouTube Data API</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded font-semibold" :class="ytConnected ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400'" x-text="ytConnected ? 'Connected' : 'Disconnected'"></span>
+                            </div>
+                            <input type="text" x-model="ytChannelName" placeholder="Channel Name / URL" class="bg-darkbg text-xs text-slate-200 border border-cardborder rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <template x-if="!ytConnected">
+                                <button @click="connectYouTube()" :disabled="ytConnecting" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-2">
+                                    <template x-if="ytConnecting"><div class="w-3 h-3 rounded-full border-2 border-white border-t-transparent animate-spin"></div></template>
+                                    <span x-text="ytConnecting ? 'Connecting...' : 'Connect YouTube'"></span>
+                                </button>
+                            </template>
+                            <template x-if="ytConnected">
+                                <button @click="disconnectYouTube()" class="bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white text-xs font-semibold px-4 py-2 rounded-xl transition">
+                                    Disconnect
+                                </button>
+                            </template>
+                        </div>
                     </div>
-                    <div>
-                        <label class="font-semibold text-slate-300 block mb-1">TikTok Account Link</label>
-                        <input type="text" x-model="tiktokAccount" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="font-semibold text-slate-300 block mb-1">WhatsApp Business Number</label>
-                        <input type="text" x-model="whatsappNumber" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500">
+
+                    <!-- 4. Twitter / X -->
+                    <div class="bg-cardborder/40 border border-cardborder rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-white text-xs">Twitter / X</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded font-semibold" :class="twitterConnected ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400'" x-text="twitterConnected ? 'Connected' : 'Disconnected'"></span>
+                            </div>
+                            <input type="text" x-model="twitterHandle" placeholder="@handle" class="bg-darkbg text-xs text-slate-200 border border-cardborder rounded-lg px-3 py-1.5 w-48 focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <template x-if="!twitterConnected">
+                                <button @click="connectTwitter()" :disabled="twitterConnecting" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-2">
+                                    <template x-if="twitterConnecting"><div class="w-3 h-3 rounded-full border-2 border-white border-t-transparent animate-spin"></div></template>
+                                    <span x-text="twitterConnecting ? 'Connecting...' : 'Connect Twitter'"></span>
+                                </button>
+                            </template>
+                            <template x-if="twitterConnected">
+                                <button @click="disconnectTwitter()" class="bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white text-xs font-semibold px-4 py-2 rounded-xl transition">
+                                    Disconnect
+                                </button>
+                            </template>
+                        </div>
                     </div>
                 </div>
 
-                <button @click="saveAccounts()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl text-xs transition mt-2 shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
+                <button @click="saveAccounts()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl text-xs transition shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
                     <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    Save & Link Accounts
+                    Save & Apply Changes
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- IN-DEPTH SOCIAL AUDIT MODAL WITH OAUTH AUTO-CONNECT -->
+    <!-- INITIAL LOGIN MODAL (If not logged in) -->
+    <div x-show="!isLoggedIn || loginModalOpen" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4" x-transition>
+        <div class="glass-panel bg-cardbg border border-cardborder rounded-2xl max-w-md w-full p-6 relative shadow-2xl">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-500 flex items-center justify-center text-white font-bold text-xl">
+                        LS
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-white">Welcome to Latsky Socials</h3>
+                        <p class="text-xs text-slate-400">Enter your company name to begin managing your social feeds.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3 pt-2 text-xs">
+                    <div>
+                        <label class="font-semibold text-slate-300 block mb-1">Company / Brand Name</label>
+                        <input type="text" x-model="companyName" placeholder="e.g. Latsky Multimedia" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-3 text-white focus:outline-none focus:border-blue-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-slate-300 block mb-1">Primary Email</label>
+                        <input type="email" x-model="userEmail" placeholder="your@email.com" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+
+                <button @click="login()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl text-xs transition shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Continue to Dashboard & Connect Accounts
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- IN-DEPTH SOCIAL AUDIT MODAL (Auto-reads connected accounts) -->
     <div x-show="auditModalOpen" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4" x-transition>
         <div class="glass-panel bg-cardbg border border-cardborder rounded-2xl max-w-3xl w-full p-6 relative shadow-2xl max-h-[90vh] overflow-y-auto" @click.outside="auditModalOpen = false">
             <button @click="auditModalOpen = false" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">&times;</button>
@@ -620,81 +879,36 @@
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold">📊</div>
                         <div>
-                            <h3 class="font-bold text-base text-white">In-Depth & Accurate Social Audit Engine</h3>
-                            <p class="text-xs text-slate-400">Connect via official Meta / Google OAuth or enter your handle for deep algorithmic analysis.</p>
+                            <h3 class="font-bold text-base text-white">In-Depth Social Audit for <span class="text-emerald-400" x-text="companyName"></span></h3>
+                            <p class="text-xs text-slate-400">Automatically pulls metrics from your connected accounts above.</p>
                         </div>
                     </div>
 
-                    <!-- ONE-CLICK OAUTH AUTO-CONNECT BOX -->
-                    <div class="bg-gradient-to-r from-blue-900/40 via-cardbg to-emerald-950/40 border border-blue-500/40 p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div class="space-y-1 text-left">
-                            <span class="text-xs font-bold text-white flex items-center gap-1.5">
-                                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                                Instant Secure Page Link (OAuth)
-                            </span>
-                            <p class="text-[11px] text-slate-300">Click below to automatically authorize and fetch verified tokens & IDs for <strong class="text-cyan-300" x-text="igInput"></strong>.</p>
-                        </div>
-                        <button @click="simulateOAuthConnect()" :disabled="isOAuthConnecting" class="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-lg shrink-0 flex items-center gap-2">
-                            <template x-if="isOAuthConnecting">
-                                <div class="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
-                            </template>
-                            <span x-text="isOAuthConnecting ? 'Connecting...' : 'Connect with Meta / IG'"></span>
-                        </button>
-                    </div>
-
-                    <!-- Manual / Advanced Credentials Toggle -->
-                    <div class="bg-cardborder/40 border border-cardborder p-4 rounded-xl space-y-3">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <input type="checkbox" x-model="useLiveApi" class="rounded bg-darkbg border-cardborder text-blue-600 focus:ring-0 cursor-pointer w-4 h-4">
-                                <div>
-                                    <span class="text-xs font-bold text-white block">Manual Live API Credentials</span>
-                                    <span class="text-[10px] text-slate-400">Tokens auto-populate when using the OAuth button above.</span>
-                                </div>
+                    <div class="bg-cardborder/40 border border-cardborder p-4 rounded-xl space-y-3 text-xs">
+                        <span class="font-bold text-slate-300 block uppercase tracking-wider">Active Connected Accounts Ready for Audit:</span>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
+                            <div class="bg-darkbg p-2.5 rounded-lg border border-cardborder">
+                                <span class="text-slate-400 block">Instagram</span>
+                                <span class="font-bold text-emerald-400" x-text="igConnected ? igAccount : 'Not Connected'"></span>
                             </div>
-                            <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full font-semibold" x-text="useLiveApi ? 'Connected' : 'Standard'"></span>
-                        </div>
-
-                        <template x-if="useLiveApi">
-                            <div class="space-y-3 pt-2 border-t border-cardborder text-xs">
-                                <div>
-                                    <label class="font-semibold text-slate-300 block mb-1">Meta Access Token (Auto-populated via OAuth)</label>
-                                    <input type="text" x-model="metaAccessToken" class="w-full bg-darkbg border border-cardborder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 font-mono text-[11px]" placeholder="EAAQt...">
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <div>
-                                        <label class="font-semibold text-slate-300 block mb-1">Instagram Business Account ID</label>
-                                        <input type="text" x-model="igBusinessId" class="w-full bg-darkbg border border-cardborder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-[11px]">
-                                    </div>
-                                    <div>
-                                        <label class="font-semibold text-slate-300 block mb-1">YouTube Data API v3 Key</label>
-                                        <input type="text" x-model="youtubeApiKey" class="w-full bg-darkbg border border-cardborder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 font-mono text-[11px]">
-                                    </div>
-                                </div>
+                            <div class="bg-darkbg p-2.5 rounded-lg border border-cardborder">
+                                <span class="text-slate-400 block">Facebook</span>
+                                <span class="font-bold text-emerald-400" x-text="fbConnected ? fbPageName : 'Not Connected'"></span>
                             </div>
-                        </template>
-                    </div>
-
-                    <div class="space-y-3 pt-1">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div>
-                                <label class="text-xs font-semibold text-slate-300 block mb-1">Instagram Handle</label>
-                                <input type="text" x-model="igInput" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
+                            <div class="bg-darkbg p-2.5 rounded-lg border border-cardborder">
+                                <span class="text-slate-400 block">YouTube</span>
+                                <span class="font-bold text-emerald-400" x-text="ytConnected ? ytChannelName : 'Not Connected'"></span>
                             </div>
-                            <div>
-                                <label class="text-xs font-semibold text-slate-300 block mb-1">Facebook Page</label>
-                                <input type="text" x-model="fbInput" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold text-slate-300 block mb-1">Google Business Profile</label>
-                                <input type="text" x-model="gbpInput" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
+                            <div class="bg-darkbg p-2.5 rounded-lg border border-cardborder">
+                                <span class="text-slate-400 block">Twitter</span>
+                                <span class="font-bold text-emerald-400" x-text="twitterConnected ? twitterHandle : 'Not Connected'"></span>
                             </div>
                         </div>
                     </div>
 
                     <button @click="runAudit()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl text-xs transition mt-2 shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
                         <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        <span>Run Verified In-Depth Audit</span>
+                        <span>Run Audit on Connected Accounts</span>
                     </button>
                 </div>
             </template>
@@ -703,8 +917,8 @@
                 <div class="py-16 flex flex-col items-center justify-center text-center space-y-4">
                     <div class="w-12 h-12 rounded-full border-2 border-blue-500 border-t-transparent animate-spin"></div>
                     <div>
-                        <h4 class="font-bold text-sm text-white">Fetching Verified Metrics via Graph API & Algorithm Engine...</h4>
-                        <p class="text-xs text-slate-400 mt-1">Extracting exact video completion rates, click-through velocity, and audience heatmaps.</p>
+                        <h4 class="font-bold text-sm text-white">Fetching Verified Metrics from Your Connected APIs...</h4>
+                        <p class="text-xs text-slate-400 mt-1">Analyzing video completion rates, click-through velocity, and audience heatmaps.</p>
                     </div>
                 </div>
             </template>
@@ -717,11 +931,11 @@
                                 94
                             </div>
                             <div>
-                                <h3 class="font-bold text-base text-white">Verified In-Depth Performance & Growth Audit</h3>
-                                <p class="text-xs text-slate-400" x-text="igInput + (useLiveApi ? ' • Live Meta Graph API Connected' : ' • Advanced Algorithmic Deep-Dive')"></p>
+                                <h3 class="font-bold text-base text-white" x-text="'Audit Results for ' + companyName"></h3>
+                                <p class="text-xs text-slate-400">Live API tokens and connected handles verified.</p>
                             </div>
                         </div>
-                        <button @click="auditStep = 'input'" class="text-xs text-blue-400 hover:underline">Change Settings</button>
+                        <button @click="auditStep = 'input'" class="text-xs text-blue-400 hover:underline">Back</button>
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -738,70 +952,17 @@
                         <div class="bg-cardborder/50 border border-cardborder p-3 rounded-xl text-center">
                             <span class="text-[10px] text-slate-400 uppercase font-semibold">Engagement Score</span>
                             <div class="text-lg font-bold text-emerald-400 mt-1">7.8%</div>
-                            <span class="text-[10px] text-slate-300">Top tier hospitality</span>
+                            <span class="text-[10px] text-slate-300">Top tier performance</span>
                         </div>
                         <div class="bg-cardborder/50 border border-cardborder p-3 rounded-xl text-center">
-                            <span class="text-[10px] text-slate-400 uppercase font-semibold">Direct Bookings</span>
-                            <div class="text-lg font-bold text-blue-400 mt-1">6 Inquiries</div>
+                            <span class="text-[10px] text-slate-400 uppercase font-semibold">Direct Inquiries</span>
+                            <div class="text-lg font-bold text-blue-400 mt-1">6 Leads</div>
                             <span class="text-[10px] text-slate-300">Tracked this week</span>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-cardborder/30 border border-cardborder p-4 rounded-xl space-y-3">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">Content Format Performance</h4>
-                            <div class="space-y-2 text-xs">
-                                <div>
-                                    <div class="flex justify-between mb-1">
-                                        <span class="text-slate-300">Reels (9:16 Cinematic Video)</span>
-                                        <span class="font-bold text-emerald-400">62% Share of Voice</span>
-                                    </div>
-                                    <div class="w-full bg-darkbg rounded-full h-2 overflow-hidden border border-cardborder">
-                                        <div class="bg-blue-500 h-full rounded-full" style="width: 62%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between mb-1">
-                                        <span class="text-slate-300">Carousel Photo Galleries</span>
-                                        <span class="font-bold text-blue-400">24% Share of Voice</span>
-                                    </div>
-                                    <div class="w-full bg-darkbg rounded-full h-2 overflow-hidden border border-cardborder">
-                                        <div class="bg-indigo-500 h-full rounded-full" style="width: 24%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between mb-1">
-                                        <span class="text-slate-300">Stories & Daily Updates</span>
-                                        <span class="font-bold text-purple-400">14% Share of Voice</span>
-                                    </div>
-                                    <div class="w-full bg-darkbg rounded-full h-2 overflow-hidden border border-cardborder">
-                                        <div class="bg-purple-500 h-full rounded-full" style="width: 14%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-cardborder/30 border border-cardborder p-4 rounded-xl space-y-3">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">Peak Engagement Windows</h4>
-                            <div class="space-y-2 text-xs">
-                                <div class="flex justify-between items-center bg-darkbg/50 px-3 py-2 rounded-lg border border-cardborder">
-                                    <span class="text-slate-200 font-medium">Friday Golden Hour (16:30 - 18:30)</span>
-                                    <span class="font-bold text-emerald-400">Highest Weekend Intent</span>
-                                </div>
-                                <div class="flex justify-between items-center bg-darkbg/50 px-3 py-2 rounded-lg border border-cardborder">
-                                    <span class="text-slate-200 font-medium">Sunday Morning Slow Start (08:30 - 10:00)</span>
-                                    <span class="font-bold text-blue-400">High Save Rate</span>
-                                </div>
-                                <div class="flex justify-between items-center bg-darkbg/50 px-3 py-2 rounded-lg border border-cardborder">
-                                    <span class="text-slate-200 font-medium">Wednesday Evening Planning (19:00 - 20:30)</span>
-                                    <span class="font-bold text-purple-400">Mid-Week Booking Surge</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <button @click="auditModalOpen = false" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-xl text-xs transition shadow-lg shadow-blue-600/20">
-                        Apply In-Depth Insights to Weekly Automation
+                        Apply Insights to Weekly Automation
                     </button>
                 </div>
             </template>
@@ -816,12 +977,12 @@
 
     <div x-show="accountConnectedToast" x-transition class="fixed bottom-6 right-6 bg-blue-600 text-white px-5 py-3.5 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        Company and social accounts updated successfully!
+        Social accounts hub updated successfully!
     </div>
 
-    <div x-show="oauthSuccessToast" x-transition class="fixed bottom-6 right-6 bg-emerald-600 text-white px-5 py-3.5 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2 border border-emerald-400/40">
+    <div x-show="loginToast" x-transition class="fixed bottom-6 right-6 bg-emerald-600 text-white px-5 py-3.5 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2 border border-emerald-400/40">
         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        <span>Successfully authenticated and linked via Meta OAuth!</span>
+        <span>Logged in successfully. Welcome to your dashboard!</span>
     </div>
 
 </body>
