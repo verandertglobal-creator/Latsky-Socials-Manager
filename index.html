@@ -64,6 +64,25 @@
           igFormat: 'reel',
           fbFormat: 'feed',
           twitterFormat: 'media',
+          
+          // Media Upload State
+          mediaFile: null,
+          mediaPreviewUrl: '',
+          mediaType: '',
+          isDragging: false,
+          
+          handleFile(file) {
+              if (!file) return;
+              this.mediaFile = file;
+              this.mediaType = file.type.startsWith('video') ? 'video' : 'image';
+              this.mediaPreviewUrl = URL.createObjectURL(file);
+          },
+          clearMedia() {
+              this.mediaFile = null;
+              this.mediaPreviewUrl = '';
+              this.mediaType = '';
+          },
+
           runAudit() {
               this.auditStep = 'loading';
               setTimeout(() => {
@@ -126,12 +145,43 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                        <!-- Drag & Drop Media Upload Zone -->
-                        <div class="h-64 rounded-xl border-2 border-dashed border-cardborder hover:border-blue-500 bg-darkbg/40 flex flex-col items-center justify-center cursor-pointer transition relative group overflow-hidden p-4 text-center">
-                            <svg class="w-10 h-10 text-slate-500 mb-2 group-hover:text-blue-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                            <p class="text-xs font-semibold text-slate-200">drag/drop image/video here</p>
-                            <p class="text-[10px] text-slate-500 mt-1">Supports MP4, MOV, JPG, PNG (Auto-optimized)</p>
-                            <input type="file" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*,video/*">
+                        <!-- Functional Drag & Drop / File Upload Zone -->
+                        <div class="h-64 rounded-xl border-2 border-dashed transition relative group overflow-hidden flex flex-col items-center justify-center p-4 text-center"
+                             :class="isDragging ? 'border-blue-500 bg-blue-500/10' : 'border-cardborder hover:border-blue-500 bg-darkbg/40'"
+                             @dragover.prevent="isDragging = true"
+                             @dragleave.prevent="isDragging = false"
+                             @drop.prevent="isDragging = false; handleFile($event.dataTransfer.files[0])">
+                            
+                            <!-- State A: File Loaded Preview -->
+                            <template x-if="mediaPreviewUrl">
+                                <div class="absolute inset-0 w-full h-full bg-darkbg flex items-center justify-center">
+                                    <template x-if="mediaType === 'image'">
+                                        <img :src="mediaPreviewUrl" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="mediaType === 'video'">
+                                        <video :src="mediaPreviewUrl" class="w-full h-full object-cover" autoplay muted loop></video>
+                                    </template>
+                                    <!-- Remove / Change Button Overlay -->
+                                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-2 p-4">
+                                        <p class="text-xs font-semibold text-white truncate max-w-[200px]" x-text="mediaFile ? mediaFile.name : 'Media Loaded'"></p>
+                                        <button @click.stop="clearMedia()" class="bg-red-600 hover:bg-red-500 text-white text-[11px] font-semibold px-3 py-1.5 rounded-lg shadow transition">
+                                            Remove / Change Media
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- State B: Empty Drop Zone -->
+                            <template x-if="!mediaPreviewUrl">
+                                <div class="flex flex-col items-center justify-center cursor-pointer">
+                                    <svg class="w-10 h-10 text-slate-500 mb-2 group-hover:text-blue-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                                    <p class="text-xs font-semibold text-slate-200">drag/drop image/video here</p>
+                                    <p class="text-[10px] text-slate-500 mt-1">Supports PNG, JPG, MP4, MOV, WEBM</p>
+                                </div>
+                            </template>
+
+                            <!-- Hidden File Input -->
+                            <input type="file" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/png,image/jpeg,image/jpg,video/mp4,video/quicktime,video/webm" @change="handleFile($event.target.files[0])">
                         </div>
 
                         <div class="flex flex-col gap-3">
@@ -228,7 +278,7 @@
                 <label class="border-2 border-dashed border-cardborder hover:border-blue-500 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer transition bg-cardborder/20">
                     <span class="text-xs text-slate-300 font-semibold">+ Drop New Photo Here</span>
                     <span class="text-[10px] text-slate-500 mt-0.5">Instant AI Tagging & Captioning</span>
-                    <input type="file" class="hidden" accept="image/*,video/*">
+                    <input type="file" class="hidden" accept="image/*,video/*" @change="handleFile($event.target.files[0])">
                 </label>
             </div>
         </div>
@@ -288,7 +338,7 @@
 
     </main>
 
-    <!-- ANALYZE SOCIALS AUDIT MODAL (HANDLE INPUT & IN-DEPTH INSIGHTS) -->
+    <!-- ANALYZE SOCIALS AUDIT MODAL -->
     <div x-show="auditModalOpen" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4" x-transition>
         <div class="glass-panel bg-cardbg border border-cardborder rounded-2xl max-w-2xl w-full p-6 relative shadow-2xl max-h-[90vh] overflow-y-auto" @click.outside="auditModalOpen = false">
             <button @click="auditModalOpen = false" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">&times;</button>
