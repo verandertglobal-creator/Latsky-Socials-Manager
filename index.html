@@ -69,16 +69,25 @@
       <button onclick="switchTab('portfolio')" id="nav-portfolio" class="nav-btn px-4 py-1.5 rounded-full text-slate-400 hover:text-white transition">Portfolio Vault</button>
     </nav>
 
-    <!-- Platform OAuth Status Pills -->
-    <div class="flex items-center gap-2 flex-wrap">
-      <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/30">
-        <i class="fa-brands fa-youtube"></i> <span class="hidden sm:inline">YouTube (Long & Shorts)</span>
-      </div>
-      <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-        <i class="fa-brands fa-tiktok"></i> <span class="hidden sm:inline">TikTok</span>
-      </div>
-      <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-pink-500/10 text-pink-400 border border-pink-500/30">
-        <i class="fa-brands fa-instagram"></i> <span class="hidden sm:inline">Instagram</span>
+    <!-- Header Actions & Scheduled Queue Button -->
+    <div class="flex items-center gap-3 flex-wrap">
+      <button onclick="toggleScheduledModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition flex items-center gap-2">
+        <i class="fa-regular fa-calendar-check text-indigo-400"></i>
+        <span>Scheduled Posts</span>
+        <span id="scheduled-badge" class="bg-indigo-600 text-white px-1.5 py-0.5 rounded-full text-[10px] font-bold">0</span>
+      </button>
+
+      <!-- Platform OAuth Status Pills -->
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/30">
+          <i class="fa-brands fa-youtube"></i> <span class="hidden sm:inline">YouTube</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+          <i class="fa-brands fa-tiktok"></i> <span class="hidden sm:inline">TikTok</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-pink-500/10 text-pink-400 border border-pink-500/30">
+          <i class="fa-brands fa-instagram"></i> <span class="hidden sm:inline">Instagram</span>
+        </div>
       </div>
     </div>
   </header>
@@ -113,14 +122,14 @@
               <span id="aspect-label" class="text-[11px] font-semibold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">9:16 Vertical</span>
             </div>
 
-            <!-- Canvas Stage Box -->
-            <div id="canvas-wrapper" class="w-full bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden relative min-h-[360px] p-2">
+            <!-- Canvas Stage Box with Drag & Drop Handlers -->
+            <div id="canvas-wrapper" class="w-full bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden relative min-h-[360px] p-2 transition-all">
               
               <input type="file" id="file-input" accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)">
               
               <!-- Empty State Drop Prompt -->
               <div id="drop-prompt" onclick="document.getElementById('file-input').click()" 
-                   class="flex flex-col justify-center items-center py-12 px-4 border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl w-full cursor-pointer transition group text-center">
+                   class="flex flex-col justify-center items-center py-12 px-4 border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl w-full cursor-pointer transition group text-center bg-slate-900/40">
                 <div class="w-14 h-14 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-3 group-hover:scale-110 transition">
                   <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
                 </div>
@@ -129,14 +138,12 @@
                 <span class="mt-4 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow transition">Select Asset</span>
               </div>
 
-              <!-- Interactive Media Frame with Rigid Aspect Ratio Control -->
+              <!-- Interactive Media Frame -->
               <div id="preview-stage" class="hidden relative overflow-hidden transition-all duration-300 rounded-lg shadow-2xl bg-black border border-slate-700 flex items-center justify-center"
                    style="aspect-ratio: 9/16; height: 380px; width: auto; max-width: 100%;">
                 
-                <!-- AI Visual Scanner Laser Overlay -->
                 <div id="ai-scanner-line" class="hidden scanner-laser z-20"></div>
 
-                <!-- Media Preview Elements -->
                 <img id="media-img" class="hidden w-full h-full object-cover transition-all duration-200" src="" alt="Media Preview">
                 <video id="media-video" class="hidden w-full h-full object-cover transition-all duration-200" controls autoplay loop muted></video>
 
@@ -158,7 +165,6 @@
                   </div>
                 </div>
 
-                <!-- Floating Controls -->
                 <div class="absolute top-2 right-2 flex gap-1 z-30">
                   <button onclick="resetMedia()" type="button" class="bg-slate-900/90 hover:bg-slate-800 text-slate-300 px-2 py-1 rounded text-[11px] border border-slate-700 shadow backdrop-blur transition flex items-center gap-1">
                     <i class="fa-solid fa-rotate-left"></i> Replace
@@ -235,13 +241,11 @@
               <span id="ai-status-badge" class="text-[10px] bg-slate-800 text-slate-400 border border-slate-700 px-2 py-0.5 rounded">Ready for Scan</span>
             </div>
 
-            <!-- Scan Loading Spinner -->
             <div id="ai-scanning-state" class="hidden py-8 flex flex-col items-center justify-center text-center space-y-2">
               <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400"></i>
               <p class="text-xs font-medium text-slate-300">Analyzing focal subjects, color grade, and video hooks...</p>
             </div>
 
-            <!-- Output Suggestions Grid -->
             <div id="ai-output-content" class="space-y-3">
               <div>
                 <label class="block text-[11px] font-semibold text-slate-400 mb-1">Recommended Video / Post Titles</label>
@@ -298,12 +302,11 @@
               <input id="input-tags" type="text" value="filmmaking, videography, editingtips, capcut, cinematography" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition">
             </div>
 
-            <!-- Target Channels Selection Including YouTube Longform -->
+            <!-- Target Channels Selection -->
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-2">Publishing Destinations</label>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 
-                <!-- YouTube Longform -->
                 <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-red-500/50 transition">
                   <div class="flex items-center gap-2.5 text-xs text-slate-200">
                     <input type="checkbox" id="chk-yt-long" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
@@ -316,7 +319,6 @@
                   <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Ready</span>
                 </label>
 
-                <!-- YouTube Shorts -->
                 <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-red-500/50 transition">
                   <div class="flex items-center gap-2.5 text-xs text-slate-200">
                     <input type="checkbox" id="chk-yt-shorts" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
@@ -329,7 +331,6 @@
                   <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Ready</span>
                 </label>
 
-                <!-- TikTok Video -->
                 <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-cyan-500/50 transition">
                   <div class="flex items-center gap-2.5 text-xs text-slate-200">
                     <input type="checkbox" id="chk-tt" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
@@ -342,7 +343,6 @@
                   <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Ready</span>
                 </label>
 
-                <!-- Instagram Reels -->
                 <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-pink-500/50 transition">
                   <div class="flex items-center gap-2.5 text-xs text-slate-200">
                     <input type="checkbox" id="chk-ig" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
@@ -358,16 +358,29 @@
               </div>
             </div>
 
-            <!-- Schedule & Submit Action -->
-            <div class="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-slate-800">
-              <div class="flex items-center gap-2 text-xs text-slate-400">
-                <i class="fa-regular fa-clock text-indigo-400"></i>
-                <span>Publish Schedule: <strong class="text-white">Optimal Peak Slot (18:00 SAST)</strong></span>
+            <!-- Schedule Date/Time Picker & Action Controls -->
+            <div class="space-y-4 pt-3 border-t border-slate-800">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <label class="block text-xs font-semibold text-slate-300">
+                  <i class="fa-regular fa-clock text-indigo-400 mr-1"></i> Post Time & Date Selection
+                </label>
+                <div class="flex items-center gap-2">
+                  <input type="datetime-local" id="input-schedule-time" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 transition">
+                  <button type="button" onclick="setRecommendedTime()" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-indigo-300 text-[11px] font-semibold rounded-xl border border-slate-700 transition">
+                    Optimal Peak Slot (18:00)
+                  </button>
+                </div>
               </div>
 
-              <button onclick="triggerPublish()" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-indigo-500/25 flex items-center gap-2">
-                <i class="fa-solid fa-paper-plane"></i> Publish Selected Formats
-              </button>
+              <div class="flex flex-wrap items-center justify-end gap-3 pt-2">
+                <button onclick="schedulePost()" type="button" class="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl border border-slate-700 transition flex items-center gap-2">
+                  <i class="fa-regular fa-calendar-plus text-indigo-400"></i> Schedule Post
+                </button>
+
+                <button onclick="triggerPublish()" type="button" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-indigo-500/25 flex items-center gap-2">
+                  <i class="fa-solid fa-paper-plane"></i> Publish Immediately
+                </button>
+              </div>
             </div>
           </div>
 
@@ -442,11 +455,40 @@
 
   </main>
 
+  <!-- SCHEDULED POSTS MODAL -->
+  <div id="scheduled-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl p-6 shadow-2xl space-y-5">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <i class="fa-regular fa-calendar-check text-indigo-400 text-lg"></i>
+          <h3 class="text-sm font-bold text-white">Scheduled Publishing Queue</h3>
+        </div>
+        <button onclick="toggleScheduledModal()" class="text-slate-400 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Queue Container -->
+      <div id="scheduled-list" class="space-y-3 max-h-[60vh] overflow-y-auto no-scrollbar pr-1">
+        <!-- Rendered items appear here -->
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button onclick="toggleScheduledModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl transition">
+          Close Window
+        </button>
+      </div>
+    </div>
+  </div>
+
   <footer class="bg-slate-950 border-t border-slate-800 px-4 sm:px-8 py-5 text-center text-xs text-slate-500">
     <p>© 2026 Latsky Multimedia. Auto-scaling, vision AI scanning & omni-platform publishing studio.</p>
   </footer>
 
   <script>
+    // SCHEDULED POSTS STATE MANAGEMENT
+    let scheduledQueue = [];
+
     // NAVIGATION SWITCHER
     function switchTab(tabName) {
       ['upload', 'analytics', 'portfolio'].forEach(t => {
@@ -481,11 +523,40 @@
     }
 
     // FILE DROP & SELECTION LOGIC
+    const canvasWrapper = document.getElementById('canvas-wrapper');
     const fileInput = document.getElementById('file-input');
     const dropPrompt = document.getElementById('drop-prompt');
     const previewStage = document.getElementById('preview-stage');
     const mediaImg = document.getElementById('media-img');
     const mediaVideo = document.getElementById('media-video');
+
+    // Drag and Drop Event Listeners
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      canvasWrapper.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }, false);
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      canvasWrapper.addEventListener(eventName, () => {
+        dropPrompt.classList.add('border-indigo-500', 'bg-indigo-500/10');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      canvasWrapper.addEventListener(eventName, () => {
+        dropPrompt.classList.remove('border-indigo-500', 'bg-indigo-500/10');
+      }, false);
+    });
+
+    canvasWrapper.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files && files.length > 0) {
+        processFile(files[0]);
+      }
+    });
 
     function handleFileSelect(e) {
       const files = e.target.files;
@@ -508,7 +579,6 @@
         mediaVideo.classList.remove('hidden');
       }
 
-      // Auto run visual AI inspection on file load
       runAIVisionScan();
     }
 
@@ -522,11 +592,9 @@
       fileInput.value = '';
     }
 
-    // FIXED ASPECT RATIO & SIZING LOGIC
     function setAspectRatio(ratio, labelText, presetKey) {
       const stage = document.getElementById('preview-stage');
       
-      // Explicit aspect-ratio style configuration fixing sizing bug
       if (ratio === '9/16') {
         stage.style.aspectRatio = '9 / 16';
         stage.style.height = '380px';
@@ -543,7 +611,6 @@
 
       document.getElementById('aspect-label').innerText = labelText;
 
-      // Update active ratio button styles
       ['916', '11', '169'].forEach(r => {
         const btn = document.getElementById(`btn-ratio-${r}`);
         if (r === ratio.replace('/', '')) {
@@ -585,14 +652,12 @@
       }
     }
 
-    // AI VISION SCANNER ENGINE
     function runAIVisionScan() {
       const scanner = document.getElementById('ai-scanner-line');
       const scanState = document.getElementById('ai-scanning-state');
       const content = document.getElementById('ai-output-content');
       const badge = document.getElementById('ai-status-badge');
 
-      // Visual feedback
       scanner.classList.remove('hidden');
       scanState.classList.remove('hidden');
       content.classList.add('hidden');
@@ -607,7 +672,6 @@
         badge.className = "text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded";
         badge.innerText = "Scan Complete";
 
-        // Simulated intelligent media detection sets
         const sampleSets = [
           {
             titles: [
@@ -617,21 +681,11 @@
             ],
             caption: "Inside the edit suite: breakdown of key visual hooks, color grading workflow, and retention pacing for commercial brand films.",
             tags: ["#filmmaking", "#videography", "#editingtips", "#capcut", "#cinematography", "#contentcreator"]
-          },
-          {
-            titles: [
-              "Cinematic Documentary Lighting Masterclass",
-              "Behind the Scenes: Crafting High-Contrast Visual Narratives",
-              "How I Capture Raw Character Stories for Film"
-            ],
-            caption: "A deep dive into lighting setup, lens choice, and audio capture for authentic documentary storytelling.",
-            tags: ["#documentary", "#filmmaker", "#cinematographer", "#behindthescenes", "#director", "#colorgrade"]
           }
         ];
 
-        const selected = sampleSets[Math.floor(Math.random() * sampleSets.length)];
+        const selected = sampleSets[0];
 
-        // Render Titles
         const titlesContainer = document.getElementById('suggested-titles');
         titlesContainer.innerHTML = selected.titles.map(t => `
           <div onclick="applyTitle('${t}')" class="p-2 bg-slate-950/80 border border-slate-800 hover:border-indigo-500/50 rounded-lg text-xs text-slate-200 cursor-pointer transition flex justify-between items-center group">
@@ -640,10 +694,7 @@
           </div>
         `).join('');
 
-        // Render Caption
         document.getElementById('suggested-caption').innerText = selected.caption;
-
-        // Render Tags
         document.getElementById('suggested-tags').innerHTML = selected.tags.map(tag => `
           <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md">${tag}</span>
         `).join('');
@@ -665,23 +716,114 @@
       alert("AI suggestions applied to publishing form!");
     }
 
-    function triggerPublish() {
-      const selected = [];
-      if (document.getElementById('chk-yt-long').checked) selected.push('YouTube Longform (16:9)');
-      if (document.getElementById('chk-yt-shorts').checked) selected.push('YouTube Shorts (9:16)');
-      if (document.getElementById('chk-tt').checked) selected.push('TikTok Video');
-      if (document.getElementById('chk-ig').checked) selected.push('Instagram Reels');
+    function setRecommendedTime() {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(18, 0, 0, 0);
+      
+      const localIso = new Date(tomorrow.getTime() - (tomorrow.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+      document.getElementById('input-schedule-time').value = localIso;
+    }
 
+    function getSelectedPlatforms() {
+      const selected = [];
+      if (document.getElementById('chk-yt-long').checked) selected.push('YouTube Longform');
+      if (document.getElementById('chk-yt-shorts').checked) selected.push('YouTube Shorts');
+      if (document.getElementById('chk-tt').checked) selected.push('TikTok');
+      if (document.getElementById('chk-ig').checked) selected.push('Instagram Reels');
+      return selected;
+    }
+
+    function schedulePost() {
+      const title = document.getElementById('input-title').value.trim();
+      const timeVal = document.getElementById('input-schedule-time').value;
+      const platforms = getSelectedPlatforms();
+
+      if (!title) {
+        alert("Please provide a title for the post.");
+        return;
+      }
+      if (!timeVal) {
+        alert("Please select a date and time to schedule your post.");
+        return;
+      }
+      if (!platforms.length) {
+        alert("Please select at least one target platform.");
+        return;
+      }
+
+      const formattedTime = new Date(timeVal).toLocaleString('en-US', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      });
+
+      const newPost = {
+        id: Date.now(),
+        title: title,
+        time: formattedTime,
+        platforms: platforms
+      };
+
+      scheduledQueue.push(newPost);
+      updateScheduledQueueUI();
+      alert(`Post scheduled successfully for ${formattedTime}!`);
+    }
+
+    function cancelPost(id) {
+      scheduledQueue = scheduledQueue.filter(post => post.id !== id);
+      updateScheduledQueueUI();
+    }
+
+    function updateScheduledQueueUI() {
+      document.getElementById('scheduled-badge').innerText = scheduledQueue.length;
+      const container = document.getElementById('scheduled-list');
+
+      if (!scheduledQueue.length) {
+        container.innerHTML = `
+          <div class="py-8 text-center text-slate-500 text-xs">
+            <i class="fa-regular fa-calendar-xmark text-2xl mb-2 block text-slate-600"></i>
+            No posts currently scheduled in the queue.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = scheduledQueue.map(item => `
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between gap-3">
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold text-white line-clamp-1">${item.title}</h4>
+            <div class="flex items-center gap-2 text-[10px] text-slate-400">
+              <span class="text-indigo-400 font-medium"><i class="fa-regular fa-clock"></i> ${item.time}</span>
+              <span>•</span>
+              <span class="text-slate-300">${item.platforms.join(', ')}</span>
+            </div>
+          </div>
+          <button onclick="cancelPost(${item.id})" class="px-2.5 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[11px] font-semibold rounded-lg border border-red-500/20 transition flex items-center gap-1 shrink-0">
+            <i class="fa-solid fa-trash-can"></i> Cancel
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function toggleScheduledModal() {
+      const modal = document.getElementById('scheduled-modal');
+      modal.classList.toggle('hidden');
+    }
+
+    function triggerPublish() {
+      const selected = getSelectedPlatforms();
       if (!selected.length) {
         alert("Please select at least one channel destination.");
         return;
       }
-
       alert(`Dispatching master asset to selected channels:\n- ${selected.join('\n- ')}`);
     }
 
     // CHART.JS SETUP
     window.onload = function() {
+      setRecommendedTime();
+      updateScheduledQueueUI();
+
       const ctx = document.getElementById('retentionChart').getContext('2d');
       new Chart(ctx, {
         type: 'line',
