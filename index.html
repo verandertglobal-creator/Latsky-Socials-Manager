@@ -55,7 +55,17 @@
       x-data="{ 
           currentTab: 'today', 
           auditModalOpen: false, 
+          accountModalOpen: false,
           auditStep: 'input', 
+          
+          // Company & Linked Accounts State
+          companyName: 'Paternoster Seaside Cottages',
+          igAccount: '@paternoster_cottages',
+          fbAccount: 'facebook.com/paternosterseaside',
+          tiktokAccount: '@paternoster_stays',
+          whatsappNumber: '+27 82 555 0192',
+          accountConnectedToast: false,
+
           igInput: '@paternoster_cottages', 
           fbInput: 'facebook.com/paternosterseaside', 
           gbpInput: 'Paternoster Seaside Cottages', 
@@ -91,7 +101,7 @@
               { id: 3, name: 'Sunset Horizon View', type: 'image', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300', caption: 'As the sun dips below the Atlantic horizon.' }
           ],
 
-          // Scheduled Posts for Calendar View
+          // Scheduled Posts for Calendar View (appear as bright highlighted blocks)
           scheduledPosts: [
               { id: 1, date: '2026-09-18', time: '17:00', title: 'Sunset Horizon View', platform: 'Instagram (Reel)', status: 'Queued' },
               { id: 2, date: '2026-09-19', time: '09:00', title: 'Patio Morning Coffee', platform: 'Facebook (Feed)', status: 'Scheduled' },
@@ -164,6 +174,12 @@
               setTimeout(() => this.publishedToast = false, 3500);
           },
 
+          saveAccounts() {
+              this.accountModalOpen = false;
+              this.accountConnectedToast = true;
+              setTimeout(() => this.accountConnectedToast = false, 3500);
+          },
+
           runAudit() {
               this.auditStep = 'loading';
               setTimeout(() => {
@@ -179,16 +195,22 @@
                 LS
             </div>
             <div>
-                <h1 class="font-bold text-base text-white tracking-wide">Latsky Socials Manager</h1>
-                <p class="text-xs text-slate-400">Smart Hospitality Co-Pilot • Multi-Platform Hub</p>
+                <h1 class="font-bold text-base text-white tracking-wide" x-text="companyName"></h1>
+                <p class="text-xs text-slate-400">Latsky Socials Manager • Connected to <span class="text-emerald-400 font-medium" x-text="igAccount"></span></p>
             </div>
         </div>
 
-        <!-- Masterclass Analyze Socials Button -->
-        <button @click="auditModalOpen = true; auditStep = 'input'" class="glow-button px-5 py-2.5 rounded-full bg-slate-900 text-white font-semibold text-xs tracking-wider uppercase border border-white/10 flex items-center gap-2 hover:scale-105 active:scale-95 transition">
-            <svg class="w-4 h-4 text-emerald-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            In-Depth Social Audit
-        </button>
+        <!-- Header Actions: Link Accounts & Social Audit -->
+        <div class="flex items-center gap-3">
+            <button @click="accountModalOpen = true" class="px-4 py-2 rounded-full bg-blue-600/20 text-blue-400 font-semibold text-xs tracking-wider uppercase border border-blue-500/30 flex items-center gap-2 hover:bg-blue-600/30 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                Link Accounts & Company
+            </button>
+            <button @click="auditModalOpen = true; auditStep = 'input'" class="glow-button px-4 py-2 rounded-full bg-slate-900 text-white font-semibold text-xs tracking-wider uppercase border border-white/10 flex items-center gap-2 hover:scale-105 active:scale-95 transition">
+                <svg class="w-4 h-4 text-emerald-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Social Audit
+            </button>
+        </div>
     </header>
 
     <!-- Main App Container (4-Tab Navigation) -->
@@ -271,12 +293,12 @@
                                 </div>
                             </template>
 
-                            <!-- State C: Empty Drop Zone -->
+                            <!-- State C: Empty Drop Zone with exact requested text -->
                             <template x-if="!mediaPreviewUrl && !isAnalyzing">
                                 <div class="flex flex-col items-center justify-center cursor-pointer w-full h-full p-4">
                                     <svg class="w-10 h-10 text-slate-500 mb-2 group-hover:text-blue-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                                    <p class="text-xs font-semibold text-slate-200">drag/drop image/video here</p>
-                                    <p class="text-[10px] text-slate-500 mt-1" x-text="'Previewing as ' + igFormat.toUpperCase() + ' (Exact Size)'"></p>
+                                    <p class="text-xs font-semibold text-slate-200">drop your photo/videos here for easy access and weekly planning</p>
+                                    <p class="text-[10px] text-blue-400 mt-1" x-text="'Previewing as ' + igFormat.toUpperCase() + ' (Exact Size)'"></p>
                                 </div>
                             </template>
 
@@ -292,7 +314,7 @@
                             </div>
                             <textarea x-model="captionText" rows="4" class="w-full bg-cardborder/40 border border-cardborder rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed focus:outline-none focus:border-blue-500 resize-none"></textarea>
                             
-                            <!-- Expanded Clickable Tags (Clicks append instantly) -->
+                            <!-- Expanded Clickable Tags -->
                             <div>
                                 <span class="text-[10px] text-slate-400 block mb-1 uppercase font-semibold">Suggested Tags (Click to append):</span>
                                 <div class="flex flex-wrap gap-1.5 max-h-[110px] overflow-y-auto pr-1">
@@ -315,7 +337,7 @@
                 <div class="mt-6 pt-4 border-t border-cardborder flex flex-col gap-4">
                     <!-- Platform Toggle & Format Configuration Panel -->
                     <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl space-y-3">
-                        <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">Platform Toggles & Format Configuration</span>
+                        <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">Publishing to Linked Account: <strong class="text-emerald-400" x-text="igAccount"></strong></span>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                             
                             <!-- Instagram Toggle & Format -->
@@ -372,7 +394,7 @@
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <span class="text-xs text-slate-400">Publishes automatically to selected networks at scheduled time.</span>
+                        <span class="text-xs text-slate-400">Publishes automatically to your linked accounts at scheduled time.</span>
                         <button @click="confirmPublish()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition shadow-lg shadow-blue-600/30 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             Confirm & Schedule Post
@@ -381,14 +403,14 @@
                 </div>
             </div>
 
-            <!-- Content Bank Sidebar with exact requested text & delete support -->
+            <!-- Content Bank Sidebar with exact requested drop text & delete support -->
             <div class="glass-panel rounded-2xl p-6 flex flex-col gap-4">
                 <div class="flex justify-between items-center">
                     <h2 class="font-bold text-sm text-white">Smart Content Bank</h2>
                     <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md" x-text="contentBankItems.length + ' Cached'"></span>
                 </div>
                 
-                <!-- Exact requested wording for drop zone -->
+                <!-- Exact requested drop zone wording -->
                 <label class="border-2 border-dashed border-cardborder hover:border-blue-500 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer transition bg-cardborder/20 text-center">
                     <span class="text-xs text-slate-200 font-semibold">drop your photo/videos here for easy access and weekly planning</span>
                     <span class="text-[10px] text-blue-400 mt-1">Instant Smart Vision Analysis</span>
@@ -416,12 +438,12 @@
             </div>
         </div>
 
-        <!-- TAB 2: CALENDAR & PLANNING VIEW -->
+        <!-- TAB 2: CALENDAR & PLANNING VIEW (Bright Blocks & Removable) -->
         <div x-show="currentTab === 'calendar'" class="glass-panel rounded-2xl p-6 flex flex-col gap-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-cardborder pb-4">
                 <div>
                     <h2 class="font-bold text-base text-white">Content Planning Calendar (September 2026)</h2>
-                    <p class="text-xs text-slate-400">View and manage all scheduled hospitality posts across platforms.</p>
+                    <p class="text-xs text-slate-400">Scheduled posts appear as bright blocks below and on the monthly planning grid.</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-3 py-1.5 rounded-lg font-semibold" x-text="scheduledPosts.length + ' Total Scheduled Posts'"></span>
@@ -431,32 +453,34 @@
                 </div>
             </div>
 
-            <!-- Scheduled Posts Table / List View -->
+            <!-- Scheduled Posts Queue as BRIGHT HIGHLIGHTED BLOCKS with Delete / Remove button -->
             <div class="space-y-3">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Upcoming Queue</h3>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Active Schedule Queue</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <template x-for="post in scheduledPosts" :key="post.id">
-                        <div class="bg-cardborder/40 border border-cardborder rounded-xl p-4 flex flex-col justify-between gap-3 relative group">
+                        <div class="bg-gradient-to-br from-blue-900/40 via-cardbg to-emerald-950/30 border-2 border-blue-500/60 rounded-xl p-4 flex flex-col justify-between gap-3 relative shadow-xl shadow-blue-500/10 group hover:border-emerald-400 transition">
                             <div class="space-y-1">
                                 <div class="flex justify-between items-start">
-                                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-semibold" x-text="post.status"></span>
-                                    <span class="text-[11px] text-blue-400 font-bold" x-text="post.date"></span>
+                                    <span class="text-[10px] bg-emerald-500 text-slate-950 font-bold px-2 py-0.5 rounded-full shadow" x-text="post.status"></span>
+                                    <span class="text-[11px] text-cyan-300 font-bold" x-text="post.date"></span>
                                 </div>
-                                <h4 class="text-xs font-bold text-white truncate pt-1" x-text="post.title"></h4>
-                                <p class="text-[11px] text-slate-400" x-text="'Platform: ' + post.platform"></p>
+                                <h4 class="text-xs font-extrabold text-white truncate pt-1" x-text="post.title"></h4>
+                                <p class="text-[11px] text-slate-300 font-medium" x-text="'Linked: ' + post.platform"></p>
                             </div>
-                            <div class="flex justify-between items-center pt-2 border-t border-cardborder/60 text-[11px]">
-                                <span class="text-slate-300 font-medium" x-text="'🕒 ' + post.time"></span>
-                                <button @click="scheduledPosts = scheduledPosts.filter(p => p.id !== post.id)" class="text-red-400 hover:underline">Cancel / Delete</button>
+                            <div class="flex justify-between items-center pt-2 border-t border-blue-500/30 text-[11px]">
+                                <span class="text-emerald-300 font-bold" x-text="'🕒 ' + post.time"></span>
+                                <button @click="scheduledPosts = scheduledPosts.filter(p => p.id !== post.id)" class="bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white px-2.5 py-1 rounded-lg text-[10px] font-semibold transition flex items-center gap-1">
+                                    <span>🗑️ Remove</span>
+                                </button>
                             </div>
                         </div>
                     </template>
                 </div>
             </div>
 
-            <!-- Visual Monthly Calendar Grid Simulation -->
+            <!-- Visual Monthly Calendar Grid with Bright Blocks -->
             <div class="mt-4 pt-4 border-t border-cardborder">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">September 2026 Grid Overview</h3>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">September 2026 Visual Grid</h3>
                 <div class="grid grid-cols-7 gap-2 text-center text-xs">
                     <!-- Weekdays -->
                     <div class="text-slate-500 font-bold py-1">Mon</div>
@@ -469,15 +493,30 @@
 
                     <!-- Days 1-30 -->
                     <template x-for="day in 30">
-                        <div class="bg-cardborder/20 border border-cardborder/50 rounded-lg p-2 min-h-[70px] flex flex-col justify-between text-left relative"
-                             :class="day === 18 ? 'border-blue-500 bg-blue-500/10' : ''">
-                            <span class="text-[11px] font-semibold" :class="day === 18 ? 'text-blue-400' : 'text-slate-400'" x-text="day"></span>
+                        <div class="bg-cardborder/20 border border-cardborder/50 rounded-lg p-2 min-h-[75px] flex flex-col justify-between text-left relative"
+                             :class="day === 18 || day === 19 || day === 21 || day === 24 ? 'border-blue-500 bg-blue-600/15 ring-1 ring-blue-500/40 shadow-lg' : ''">
+                            <span class="text-[11px] font-bold" :class="day === 18 || day === 19 || day === 21 || day === 24 ? 'text-blue-300' : 'text-slate-400'" x-text="day"></span>
                             
-                            <!-- Indicators for scheduled days -->
-                            <template x-if="day === 18 || day === 19 || day === 21 || day === 24">
-                                <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1 rounded truncate font-medium">
-                                    <span x-text="day === 18 ? 'Sunset Reel' : (day === 19 ? 'Coffee' : (day === 21 ? 'Fireplace' : 'Drone'))"></span>
-                                </span>
+                            <!-- Bright Block Indicators on scheduled days -->
+                            <template x-if="day === 18">
+                                <div class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-[9px] font-bold p-1 rounded shadow truncate">
+                                    Sunset Reel (17:00)
+                                </div>
+                            </template>
+                            <template x-if="day === 19">
+                                <div class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-[9px] font-bold p-1 rounded shadow truncate">
+                                    Coffee Post (09:00)
+                                </div>
+                            </template>
+                            <template x-if="day === 21">
+                                <div class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-[9px] font-bold p-1 rounded shadow truncate">
+                                    Fireplace (18:30)
+                                </div>
+                            </template>
+                            <template x-if="day === 24">
+                                <div class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-[9px] font-bold p-1 rounded shadow truncate">
+                                    Drone Reel (16:00)
+                                </div>
                             </template>
                         </div>
                     </template>
@@ -523,29 +562,75 @@
                         <p class="text-xs text-emerald-400 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Online • Zero-Friction Mode</p>
                     </div>
                 </div>
-                <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full">For hands-off owners</span>
+                <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full" x-text="whatsappNumber"></span>
             </div>
             <div class="flex flex-col gap-3 py-4 max-h-[300px] overflow-y-auto pr-2">
                 <div class="self-end bg-blue-600 text-white text-xs max-w-md p-3 rounded-2xl rounded-tr-none shadow-md">[Sent Photo via WhatsApp]</div>
                 <div class="self-start bg-cardborder border border-cardborder text-slate-200 text-xs max-w-lg p-4 rounded-2xl rounded-tl-none shadow-md space-y-2">
                     <p class="font-semibold text-emerald-400">📸 Latsky Socials AI Co-Pilot:</p>
-                    <p>Smart Vision analyzed your photo and generated this custom caption:</p>
+                    <p>Smart Vision analyzed your photo for <strong x-text="companyName"></strong> and generated this custom caption:</p>
                     <p class="italic bg-darkbg/50 p-2.5 rounded border border-cardborder text-slate-300" x-text="captionText"></p>
-                    <p class="font-medium text-slate-300">👉 Reply <strong>YES</strong> to lock it in, or <strong>EDIT</strong> to tweak.</p>
+                    <p class="font-medium text-slate-300">👉 Reply <strong>YES</strong> to publish to <span class="text-emerald-400" x-text="igAccount"></span>.</p>
                 </div>
                 <div class="self-end bg-blue-600 text-white text-xs p-3 rounded-2xl rounded-tr-none shadow-md font-medium">YES</div>
-                <div class="self-start bg-cardborder border border-cardborder text-emerald-400 text-xs p-3 rounded-2xl rounded-tl-none font-semibold">✅ Published successfully to active networks!</div>
+                <div class="self-start bg-cardborder border border-cardborder text-emerald-400 text-xs p-3 rounded-2xl rounded-tl-none font-semibold">✅ Published successfully to your linked social accounts!</div>
             </div>
         </div>
 
     </main>
+
+    <!-- LINK ACCOUNTS & COMPANY NAME MODAL -->
+    <div x-show="accountModalOpen" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4" x-transition>
+        <div class="glass-panel bg-cardbg border border-cardborder rounded-2xl max-w-lg w-full p-6 relative shadow-2xl" @click.outside="accountModalOpen = false">
+            <button @click="accountModalOpen = false" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">&times;</button>
+            
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold">
+                        🔗
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base text-white">Link Your Accounts & Company Name</h3>
+                        <p class="text-xs text-slate-400">Connect your brand so scheduled posts publish directly to your live feeds.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3 pt-2 text-xs">
+                    <div>
+                        <label class="font-semibold text-slate-300 block mb-1">Company / Property Name</label>
+                        <input type="text" x-model="companyName" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500" placeholder="e.g. Paternoster Seaside Cottages">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-slate-300 block mb-1">Instagram Account Handle / Link</label>
+                        <input type="text" x-model="igAccount" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500" placeholder="e.g. @paternoster_cottages">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-slate-300 block mb-1">Facebook Page Link</label>
+                        <input type="text" x-model="fbAccount" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500" placeholder="e.g. facebook.com/paternosterseaside">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-slate-300 block mb-1">TikTok Account Link</label>
+                        <input type="text" x-model="tiktokAccount" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500" placeholder="e.g. @paternoster_stays">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-slate-300 block mb-1">WhatsApp Business Number</label>
+                        <input type="text" x-model="whatsappNumber" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-blue-500" placeholder="e.g. +27 82 555 0192">
+                    </div>
+                </div>
+
+                <button @click="saveAccounts()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl text-xs transition mt-2 shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Save & Link Accounts
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- ANALYZE SOCIALS AUDIT MODAL -->
     <div x-show="auditModalOpen" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4" x-transition>
         <div class="glass-panel bg-cardbg border border-cardborder rounded-2xl max-w-2xl w-full p-6 relative shadow-2xl max-h-[90vh] overflow-y-auto" @click.outside="auditModalOpen = false">
             <button @click="auditModalOpen = false" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">&times;</button>
             
-            <!-- STEP 1: HANDLE INPUT -->
             <template x-if="auditStep === 'input'">
                 <div class="space-y-4">
                     <div class="flex items-center gap-3">
@@ -580,7 +665,6 @@
                 </div>
             </template>
 
-            <!-- STEP 2: LOADING ANIMATION -->
             <template x-if="auditStep === 'loading'">
                 <div class="py-16 flex flex-col items-center justify-center text-center space-y-4">
                     <div class="w-12 h-12 rounded-full border-2 border-blue-500 border-t-transparent animate-spin"></div>
@@ -591,7 +675,6 @@
                 </div>
             </template>
 
-            <!-- STEP 3: GRANULAR, IN-DEPTH AUDIT RESULTS -->
             <template x-if="auditStep === 'results'">
                 <div class="space-y-5">
                     <div class="flex items-center justify-between border-b border-cardborder pb-4">
@@ -631,9 +714,8 @@
                         </div>
                     </div>
 
-                    <!-- Audience Demographics & Regional Heatmap Section -->
+                    <!-- Audience Demographics & Regional Heatmap -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Gender & Age Split -->
                         <div class="bg-cardborder/30 border border-cardborder p-4 rounded-xl space-y-3">
                             <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
                                 <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
@@ -662,7 +744,6 @@
                             <p class="text-[11px] text-slate-400 pt-1">Core Age Bracket: <strong class="text-slate-200">28–45 years</strong> (Couples & weekend planners).</p>
                         </div>
 
-                        <!-- Regional Viewer Hotspots -->
                         <div class="bg-cardborder/30 border border-cardborder p-4 rounded-xl space-y-3">
                             <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
                                 <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -685,31 +766,23 @@
                         </div>
                     </div>
 
-                    <!-- Actionable Growth Insights -->
-                    <div class="space-y-2.5 text-xs">
-                        <div class="bg-emerald-500/10 border border-emerald-500/20 p-3.5 rounded-xl text-emerald-200">
-                            <p class="font-semibold mb-1 text-emerald-300">🚀 Growth Accelerator Strategy:</p>
-                            <p>Targeting Friday afternoon posts with "Last-minute weekend escape" messaging directly aligns with regional audience booking behavior.</p>
-                        </div>
-                        <div class="bg-blue-500/10 border border-blue-500/20 p-3.5 rounded-xl text-blue-200">
-                            <p class="font-semibold mb-1 text-blue-300">💡 Content Tuning for Core Decision-Makers (64%):</p>
-                            <p>Emphasize interior comfort, lighting, and relaxation aesthetics in your visuals—these posts yield higher saves and profile shares.</p>
-                        </div>
-                    </div>
-
                     <button @click="auditModalOpen = false" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-xl text-xs transition shadow-lg shadow-blue-600/20">
                         Apply In-Depth Insights to Weekly Automation
                     </button>
                 </div>
             </template>
-
         </div>
     </div>
 
-    <!-- Published Success Toast -->
+    <!-- Success Toasts -->
     <div x-show="publishedToast" x-transition class="fixed bottom-6 right-6 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
         Post confirmed and scheduled successfully!
+    </div>
+
+    <div x-show="accountConnectedToast" x-transition class="fixed bottom-6 right-6 bg-blue-600 text-white px-5 py-3 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        Company and social accounts updated successfully!
     </div>
 
 </body>
