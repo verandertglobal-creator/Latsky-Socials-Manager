@@ -27,7 +27,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         .glass-panel {
-            background: rgba(17, 24, 39, 0.75);
+            background: rgba(17, 24, 39, 0.85);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
@@ -58,28 +58,29 @@
           accountModalOpen: false,
           loginModalOpen: false,
           auditStep: 'input', 
+          auditActiveChannel: 'instagram',
           
           // Authentication & Company Profile
           isLoggedIn: true,
-          companyName: 'Latsky Multimedia Hospitality',
+          companyName: 'Paternoster Cottages',
           userEmail: 'johann@latskymultimedia.co.za',
           
           // Separate Platform Connection States & Credentials
           fbConnected: true,
-          fbPageName: 'Latsky Media & Stays',
-          fbPageId: 'fb_page_9823410',
+          fbPageName: 'Paternoster Cottages Official',
+          fbPageId: 'fb_page_paternoster_01',
           fbToken: 'EAAQt_FB_TOKEN_LIVE_9812',
           fbConnecting: false,
 
           igConnected: true,
-          igAccount: '@latsky_stays',
+          igAccount: '@paternoster_cottages',
           igBusinessId: '178414998231',
           igToken: 'EAAQt_IG_TOKEN_LIVE_4412',
           igConnecting: false,
 
-          ytConnected: false,
-          ytChannelName: '',
-          ytApiKey: '',
+          ytConnected: true,
+          ytChannelName: 'Paternoster Cottages TV',
+          ytApiKey: 'AIzaSy_YT_LIVE_8832',
           ytConnecting: false,
 
           twitterConnected: false,
@@ -91,9 +92,9 @@
           accountConnectedToast: false,
           loginToast: false,
 
-          igInput: '@latsky_stays', 
-          fbInput: 'Latsky Media & Stays', 
-          gbpInput: 'Latsky Multimedia', 
+          igInput: '@paternoster_cottages', 
+          fbInput: 'Paternoster Cottages Official', 
+          gbpInput: 'Paternoster Cottages', 
           lang: 'en', 
           publishedToast: false,
           
@@ -116,19 +117,18 @@
           isDragging: false,
           isAnalyzing: false,
           
-          captionText: 'As the sun dips below the Atlantic horizon, our guests are treated to front-row seats. Who are you bringing on your next escape? 🌅✨',
+          captionText: 'As the Atlantic tide rolls into Paternoster, our guests are treated to front-row seats to the ultimate coastal stillness. Who are you bringing on your next escape? 🌊✨',
           
           // Smart Content Bank Items
           contentBankItems: [
-              { id: 1, name: 'Winter Fireplace Evening', type: 'image', url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=300', caption: 'Crackling fires and quiet evenings.' },
-              { id: 2, name: 'Patio Morning Coffee', type: 'image', url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=300', caption: 'Morning light and fresh ocean air.' },
-              { id: 3, name: 'Sunset Horizon View', type: 'image', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300', caption: 'As the sun dips below the Atlantic horizon.' }
+              { id: 1, name: 'White Fisherman Cottage Sunset', type: 'image', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300', caption: 'Golden hour on the Paternoster shoreline.' },
+              { id: 2, name: 'Fireplace Evening Wine', type: 'image', url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=300', caption: 'Cozy fireplace evenings after exploring the West Coast.' },
+              { id: 3, name: 'Morning Sea Breeze Patio', type: 'image', url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=300', caption: 'Fresh ocean air and morning coffee on the veranda.' }
           ],
 
           scheduledPosts: [],
           
           init() {
-              // Load saved session if available in localStorage
               const savedProfile = localStorage.getItem('latsky_social_profile');
               if (savedProfile) {
                   try {
@@ -183,7 +183,6 @@
               setTimeout(() => this.loginToast = false, 3500);
           },
 
-          // Separate Connect Flow for Facebook
           connectFacebook() {
               this.fbConnecting = true;
               setTimeout(() => {
@@ -200,7 +199,6 @@
               this.saveSession();
           },
 
-          // Separate Connect Flow for Instagram Business
           connectInstagram() {
               this.igConnecting = true;
               setTimeout(() => {
@@ -218,7 +216,6 @@
               this.saveSession();
           },
 
-          // Separate Connect Flow for YouTube
           connectYouTube() {
               this.ytConnecting = true;
               setTimeout(() => {
@@ -235,7 +232,6 @@
               this.saveSession();
           },
 
-          // Separate Connect Flow for Twitter/X
           connectTwitter() {
               this.twitterConnecting = true;
               setTimeout(() => {
@@ -263,13 +259,13 @@
                   this.isAnalyzing = false;
                   const fileNameLower = file.name.toLowerCase();
                   if (fileNameLower.includes('fire') || fileNameLower.includes('cozy')) {
-                      this.captionText = 'Crackling fires and quiet evenings. Experience ultimate comfort and reset your rhythm. 🔥☕';
+                      this.captionText = 'Crackling fires and quiet West Coast evenings at Paternoster Cottages. Unwind and reset your rhythm. 🔥🍷';
                   } else if (fileNameLower.includes('coffee') || fileNameLower.includes('morning')) {
-                      this.captionText = 'Morning light and fresh ocean air right on your doorstep. Ready for a slow start? ☕🌊';
+                      this.captionText = 'Morning mist over the Atlantic. Fresh sea breeze right outside your door. Ready for a slow Paternoster start? ☕🌊';
                   } else if (fileNameLower.includes('sunset') || fileNameLower.includes('dusk')) {
-                      this.captionText = 'Golden hour magic on the coast. Unwind and soak in the views. 🌅✨';
+                      this.captionText = 'Golden hour magic on the West Coast shore. Experience absolute peace at Paternoster Cottages. 🌅✨';
                   } else {
-                      this.captionText = 'Captured moments from your coastal escape. Experience peace, comfort, and unmatched views. 🌊✨';
+                      this.captionText = 'Captured moments from your Paternoster seaside escape. Experience tranquility, comfort, and unmatched views. 🌊✨';
                   }
               }, 1200);
           },
@@ -309,7 +305,7 @@
                   date: this.scheduledDate,
                   time: this.scheduledTime,
                   title: this.mediaFile ? this.mediaFile.name : 'Custom Media Post',
-                  platform: (this.igEnabled && this.igConnected ? 'Instagram ' : '') + (this.fbEnabled && this.fbConnected ? 'Facebook ' : ''),
+                  platform: (this.igEnabled && this.igConnected ? 'Instagram ' : '') + (this.fbEnabled && this.fbConnected ? 'Facebook ' : '') + (this.ytConnected ? 'YouTube ' : ''),
                   status: 'Queued'
               });
               this.publishedToast = true;
@@ -335,11 +331,11 @@
     <header class="border-b border-cardborder bg-darkbg/85 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-500 flex items-center justify-center font-bold text-lg shadow-lg shadow-blue-500/20">
-                LS
+                PC
             </div>
             <div>
                 <h1 class="font-bold text-base text-white tracking-wide" x-text="companyName"></h1>
-                <p class="text-xs text-slate-400">Latsky Socials Co-Pilot • IG: <span class="text-emerald-400 font-medium" x-text="igConnected ? igAccount : 'Not Connected'"></span></p>
+                <p class="text-xs text-slate-400">Multi-Platform Co-Pilot • IG: <span class="text-emerald-400 font-medium" x-text="igConnected ? igAccount : 'Not Connected'"></span></p>
             </div>
         </div>
 
@@ -451,16 +447,14 @@
                             <div>
                                 <span class="text-[10px] text-slate-400 block mb-1 uppercase font-semibold">Suggested Tags (Click to append):</span>
                                 <div class="flex flex-wrap gap-1.5 max-h-[110px] overflow-y-auto pr-1">
-                                    <span @click="appendTag('#CoastalEscape')" class="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-blue-500/20 transition">+ #CoastalEscape</span>
-                                    <span @click="appendTag('#SunsetViews')" class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-emerald-500/20 transition">+ #SunsetViews</span>
-                                    <span @click="appendTag('#WeekendVibes')" class="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-purple-500/20 transition">+ #WeekendVibes</span>
-                                    <span @click="appendTag('#SeasideLiving')" class="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-amber-500/20 transition">+ #SeasideLiving</span>
+                                    <span @click="appendTag('#Paternoster')" class="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-blue-500/20 transition">+ #Paternoster</span>
+                                    <span @click="appendTag('#WestCoastWay')" class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-emerald-500/20 transition">+ #WestCoastWay</span>
+                                    <span @click="appendTag('#SeasideCottage')" class="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-purple-500/20 transition">+ #SeasideCottage</span>
+                                    <span @click="appendTag('#SouthAfricaTravel')" class="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-amber-500/20 transition">+ #SouthAfricaTravel</span>
                                     <span @click="appendTag('#LuxuryStay')" class="text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-indigo-500/20 transition">+ #LuxuryStay</span>
                                     <span @click="appendTag('#WeekendGetaway')" class="text-[10px] bg-teal-500/10 text-teal-400 border border-teal-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-teal-500/20 transition">+ #WeekendGetaway</span>
                                     <span @click="appendTag('#OceanBreeze')" class="text-[10px] bg-sky-500/10 text-sky-400 border border-sky-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-sky-500/20 transition">+ #OceanBreeze</span>
                                     <span @click="appendTag('#CozyVibes')" class="text-[10px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-rose-500/20 transition">+ #CozyVibes</span>
-                                    <span @click="appendTag('#TravelSA')" class="text-[10px] bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-orange-500/20 transition">+ #TravelSA</span>
-                                    <span @click="appendTag('#HiddenGem')" class="text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2.5 py-1 rounded-lg cursor-pointer hover:bg-cyan-500/20 transition">+ #HiddenGem</span>
                                 </div>
                             </div>
                         </div>
@@ -501,18 +495,15 @@
                                 </select>
                             </div>
 
-                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2.5 rounded-lg border border-cardborder" :class="!twitterConnected ? 'opacity-50' : ''">
+                            <div class="flex items-center justify-between bg-darkbg/50 px-3 py-2.5 rounded-lg border border-cardborder" :class="!ytConnected ? 'opacity-50' : ''">
                                 <div class="flex items-center gap-2">
-                                    <input type="checkbox" x-model="twitterEnabled" :disabled="!twitterConnected" class="rounded bg-cardbg border-cardborder text-blue-600 focus:ring-0 cursor-pointer">
+                                    <input type="checkbox" x-model="ytConnected" :disabled="!ytConnected" class="rounded bg-cardbg border-cardborder text-blue-600 focus:ring-0 cursor-pointer">
                                     <div>
-                                        <span class="text-slate-200 font-medium block">Twitter / X</span>
-                                        <span class="text-[10px] text-emerald-400" x-text="twitterConnected ? twitterHandle : 'Not Connected'"></span>
+                                        <span class="text-slate-200 font-medium block">YouTube</span>
+                                        <span class="text-[10px] text-emerald-400" x-text="ytConnected ? ytChannelName : 'Not Connected'"></span>
                                     </div>
                                 </div>
-                                <select x-model="twitterFormat" :disabled="!twitterEnabled || !twitterConnected" class="bg-cardbg text-slate-200 border border-cardborder rounded px-2 py-1 text-xs">
-                                    <option value="media">Media Tweet</option>
-                                    <option value="post">Standard Tweet</option>
-                                </select>
+                                <span class="text-[10px] text-slate-400 bg-cardbg px-2 py-1 rounded">Shorts / Video</span>
                             </div>
                         </div>
                     </div>
@@ -651,26 +642,26 @@
             <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
                 <div>
                     <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Booking Correlation</span>
-                    <div class="text-3xl font-extrabold text-white mt-2">4 Direct Inquiries</div>
-                    <p class="text-xs text-emerald-400 mt-1">Generated by recent visual sunset post</p>
+                    <div class="text-3xl font-extrabold text-white mt-2">6 Cottage Inquiries</div>
+                    <p class="text-xs text-emerald-400 mt-1">Generated by recent West Coast sunset reel</p>
                 </div>
-                <div class="mt-6 pt-4 border-t border-cardborder text-xs text-slate-400">Tracked from Instagram DMs & WhatsApp clicks.</div>
+                <div class="mt-6 pt-4 border-t border-cardborder text-xs text-slate-400">Tracked from Instagram DMs & WhatsApp link clicks.</div>
             </div>
             <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
                 <div>
                     <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Primary Viewer Region</span>
-                    <div class="text-lg font-bold text-white mt-2">Metro Hubs (58%)</div>
-                    <p class="text-xs text-blue-400 mt-1">High weekend escape intent</p>
+                    <div class="text-lg font-bold text-white mt-2">Cape Town & Winelands (62%)</div>
+                    <p class="text-xs text-blue-400 mt-1">High weekend drive-in intent</p>
                 </div>
-                <div class="mt-6 pt-4 border-t border-cardborder text-xs text-slate-400">Target market alignment: Excellent for short weekend getaways.</div>
+                <div class="mt-6 pt-4 border-t border-cardborder text-xs text-slate-400">Target market alignment: Ideal for 2-night coastal getaways.</div>
             </div>
             <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
                 <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Audience Gender Split</span>
-                    <div class="text-lg font-bold text-emerald-400 mt-2">64% Female | 36% Male</div>
-                    <p class="text-xs text-slate-300 mt-1">Women drive majority of booking decisions.</p>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Audience Demographics</span>
+                    <div class="text-lg font-bold text-emerald-400 mt-2">68% Female | 32% Male</div>
+                    <p class="text-xs text-slate-300 mt-1">Aesthetic & interior ambiance drive engagement.</p>
                 </div>
-                <div class="mt-6 pt-4 border-t border-cardborder text-xs text-slate-400">Content optimized for aesthetic ambiance & comfort.</div>
+                <div class="mt-6 pt-4 border-t border-cardborder text-xs text-slate-400">Optimized for cozy fireplaces and pristine ocean views.</div>
             </div>
         </div>
 
@@ -689,7 +680,7 @@
             <div class="flex flex-col gap-3 py-4 max-h-[300px] overflow-y-auto pr-2">
                 <div class="self-end bg-blue-600 text-white text-xs max-w-md p-3 rounded-2xl rounded-tr-none shadow-md">[Sent Photo via WhatsApp]</div>
                 <div class="self-start bg-cardborder border border-cardborder text-slate-200 text-xs max-w-lg p-4 rounded-2xl rounded-tl-none shadow-md space-y-2">
-                    <p class="font-semibold text-emerald-400">📸 Latsky Socials AI Co-Pilot:</p>
+                    <p class="font-semibold text-emerald-400">📸 Paternoster AI Co-Pilot:</p>
                     <p>Smart Vision analyzed your photo for <strong x-text="companyName"></strong> and generated this custom caption:</p>
                     <p class="italic bg-darkbg/50 p-2.5 rounded border border-cardborder text-slate-300" x-text="captionText"></p>
                     <p class="font-medium text-slate-300">👉 Reply <strong>YES</strong> to publish to <span class="text-emerald-400" x-text="igAccount"></span>.</p>
@@ -842,10 +833,10 @@
             <div class="space-y-4">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-500 flex items-center justify-center text-white font-bold text-xl">
-                        LS
+                        PC
                     </div>
                     <div>
-                        <h3 class="font-bold text-base text-white">Welcome to Latsky Socials</h3>
+                        <h3 class="font-bold text-base text-white">Welcome to Social Manager</h3>
                         <p class="text-xs text-slate-400">Enter your company name to begin managing your social feeds.</p>
                     </div>
                 </div>
@@ -853,7 +844,7 @@
                 <div class="space-y-3 pt-2 text-xs">
                     <div>
                         <label class="font-semibold text-slate-300 block mb-1">Company / Brand Name</label>
-                        <input type="text" x-model="companyName" placeholder="e.g. Latsky Multimedia" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-3 text-white focus:outline-none focus:border-blue-500 text-sm">
+                        <input type="text" x-model="companyName" placeholder="e.g. Paternoster Cottages" class="w-full bg-darkbg border border-cardborder rounded-xl px-3.5 py-3 text-white focus:outline-none focus:border-blue-500 text-sm">
                     </div>
                     <div>
                         <label class="font-semibold text-slate-300 block mb-1">Primary Email</label>
@@ -869,100 +860,285 @@
         </div>
     </div>
 
-    <!-- IN-DEPTH SOCIAL AUDIT MODAL (Auto-reads connected accounts) -->
-    <div x-show="auditModalOpen" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4" x-transition>
-        <div class="glass-panel bg-cardbg border border-cardborder rounded-2xl max-w-3xl w-full p-6 relative shadow-2xl max-h-[90vh] overflow-y-auto" @click.outside="auditModalOpen = false">
+    <!-- IN-DEPTH SOCIAL AUDIT MODAL (Per Social Channel & Full In-Depth Analysis + Growth Plan) -->
+    <div x-show="auditModalOpen" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4" x-transition>
+        <div class="glass-panel bg-cardbg border border-cardborder rounded-2xl max-w-4xl w-full p-6 relative shadow-2xl max-h-[92vh] overflow-y-auto" @click.outside="auditModalOpen = false">
             <button @click="auditModalOpen = false" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">&times;</button>
             
             <template x-if="auditStep === 'input'">
-                <div class="space-y-4">
+                <div class="space-y-5">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold">📊</div>
                         <div>
-                            <h3 class="font-bold text-base text-white">In-Depth Social Audit for <span class="text-emerald-400" x-text="companyName"></span></h3>
-                            <p class="text-xs text-slate-400">Automatically pulls metrics from your connected accounts above.</p>
+                            <h3 class="font-bold text-base text-white">In-Depth Multi-Channel Social Audit for <span class="text-emerald-400" x-text="companyName"></span></h3>
+                            <p class="text-xs text-slate-400">Select a connected channel below for deep performance diagnostics, hook retention audits, and tailored growth plans.</p>
                         </div>
                     </div>
 
                     <div class="bg-cardborder/40 border border-cardborder p-4 rounded-xl space-y-3 text-xs">
-                        <span class="font-bold text-slate-300 block uppercase tracking-wider">Active Connected Accounts Ready for Audit:</span>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
-                            <div class="bg-darkbg p-2.5 rounded-lg border border-cardborder">
-                                <span class="text-slate-400 block">Instagram</span>
-                                <span class="font-bold text-emerald-400" x-text="igConnected ? igAccount : 'Not Connected'"></span>
+                        <span class="font-bold text-slate-300 block uppercase tracking-wider">Active Connected Accounts Ready for Deep Audit:</span>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-[11px]">
+                            <div class="bg-darkbg p-3 rounded-lg border border-cardborder flex flex-col justify-between">
+                                <div>
+                                    <span class="text-slate-400 block font-medium">Instagram</span>
+                                    <span class="font-bold text-emerald-400 truncate block mt-0.5" x-text="igConnected ? igAccount : 'Not Connected'"></span>
+                                </div>
+                                <span class="text-[10px] text-blue-400 mt-2" x-text="igConnected ? '🟢 Verified API Live' : '🔴 Offline'"></span>
                             </div>
-                            <div class="bg-darkbg p-2.5 rounded-lg border border-cardborder">
-                                <span class="text-slate-400 block">Facebook</span>
-                                <span class="font-bold text-emerald-400" x-text="fbConnected ? fbPageName : 'Not Connected'"></span>
+                            <div class="bg-darkbg p-3 rounded-lg border border-cardborder flex flex-col justify-between">
+                                <div>
+                                    <span class="text-slate-400 block font-medium">Facebook</span>
+                                    <span class="font-bold text-emerald-400 truncate block mt-0.5" x-text="fbConnected ? fbPageName : 'Not Connected'"></span>
+                                </div>
+                                <span class="text-[10px] text-blue-400 mt-2" x-text="fbConnected ? '🟢 Verified API Live' : '🔴 Offline'"></span>
                             </div>
-                            <div class="bg-darkbg p-2.5 rounded-lg border border-cardborder">
-                                <span class="text-slate-400 block">YouTube</span>
-                                <span class="font-bold text-emerald-400" x-text="ytConnected ? ytChannelName : 'Not Connected'"></span>
+                            <div class="bg-darkbg p-3 rounded-lg border border-cardborder flex flex-col justify-between">
+                                <div>
+                                    <span class="text-slate-400 block font-medium">YouTube</span>
+                                    <span class="font-bold text-emerald-400 truncate block mt-0.5" x-text="ytConnected ? ytChannelName : 'Not Connected'"></span>
+                                </div>
+                                <span class="text-[10px] text-blue-400 mt-2" x-text="ytConnected ? '🟢 Verified API Live' : '🔴 Offline'"></span>
                             </div>
-                            <div class="bg-darkbg p-2.5 rounded-lg border border-cardborder">
-                                <span class="text-slate-400 block">Twitter</span>
-                                <span class="font-bold text-emerald-400" x-text="twitterConnected ? twitterHandle : 'Not Connected'"></span>
+                            <div class="bg-darkbg p-3 rounded-lg border border-cardborder flex flex-col justify-between">
+                                <div>
+                                    <span class="text-slate-400 block font-medium">Twitter / X</span>
+                                    <span class="font-bold text-emerald-400 truncate block mt-0.5" x-text="twitterConnected ? twitterHandle : 'Not Connected'"></span>
+                                </div>
+                                <span class="text-[10px] text-blue-400 mt-2" x-text="twitterConnected ? '🟢 Verified API Live' : '🔴 Offline'"></span>
                             </div>
                         </div>
                     </div>
 
-                    <button @click="runAudit()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl text-xs transition mt-2 shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
+                    <button @click="runAudit()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3.5 rounded-xl text-xs transition mt-2 shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2">
                         <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        <span>Run Audit on Connected Accounts</span>
+                        <span>Run Full In-Depth Audit Across All Active Channels</span>
                     </button>
                 </div>
             </template>
 
             <template x-if="auditStep === 'loading'">
-                <div class="py-16 flex flex-col items-center justify-center text-center space-y-4">
+                <div class="py-20 flex flex-col items-center justify-center text-center space-y-4">
                     <div class="w-12 h-12 rounded-full border-2 border-blue-500 border-t-transparent animate-spin"></div>
                     <div>
-                        <h4 class="font-bold text-sm text-white">Fetching Verified Metrics from Your Connected APIs...</h4>
-                        <p class="text-xs text-slate-400 mt-1">Analyzing video completion rates, click-through velocity, and audience heatmaps.</p>
+                        <h4 class="font-bold text-sm text-white">Analyzing Channel APIs & Deep Hook Retention Metrics...</h4>
+                        <p class="text-xs text-slate-400 mt-1">Extracting video drop-off curves, hashtag resonance, and conversion funnels for <strong class="text-white" x-text="companyName"></strong>.</p>
                     </div>
                 </div>
             </template>
 
             <template x-if="auditStep === 'results'">
-                <div class="space-y-5">
-                    <div class="flex items-center justify-between border-b border-cardborder pb-4">
+                <div class="space-y-6">
+                    <!-- Header with Channel Switcher -->
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-cardborder pb-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-extrabold text-xl">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-extrabold text-xl shadow-lg">
                                 94
                             </div>
                             <div>
-                                <h3 class="font-bold text-base text-white" x-text="'Audit Results for ' + companyName"></h3>
-                                <p class="text-xs text-slate-400">Live API tokens and connected handles verified.</p>
+                                <h3 class="font-bold text-base text-white" x-text="'Audit Report: ' + companyName"></h3>
+                                <p class="text-xs text-slate-400">Detailed per-channel breakdown, diagnostic feedback, and strategic growth roadmap.</p>
                             </div>
                         </div>
-                        <button @click="auditStep = 'input'" class="text-xs text-blue-400 hover:underline">Back</button>
-                    </div>
-
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <div class="bg-cardborder/50 border border-cardborder p-3 rounded-xl text-center">
-                            <span class="text-[10px] text-slate-400 uppercase font-semibold">Total Verified Reach</span>
-                            <div class="text-lg font-bold text-white mt-1">12,450</div>
-                            <span class="text-[10px] text-emerald-400">+24% vs last week</span>
-                        </div>
-                        <div class="bg-cardborder/50 border border-cardborder p-3 rounded-xl text-center">
-                            <span class="text-[10px] text-slate-400 uppercase font-semibold">Reels Completion Rate</span>
-                            <div class="text-lg font-bold text-white mt-1">48.2%</div>
-                            <span class="text-[10px] text-emerald-400">High hook retention</span>
-                        </div>
-                        <div class="bg-cardborder/50 border border-cardborder p-3 rounded-xl text-center">
-                            <span class="text-[10px] text-slate-400 uppercase font-semibold">Engagement Score</span>
-                            <div class="text-lg font-bold text-emerald-400 mt-1">7.8%</div>
-                            <span class="text-[10px] text-slate-300">Top tier performance</span>
-                        </div>
-                        <div class="bg-cardborder/50 border border-cardborder p-3 rounded-xl text-center">
-                            <span class="text-[10px] text-slate-400 uppercase font-semibold">Direct Inquiries</span>
-                            <div class="text-lg font-bold text-blue-400 mt-1">6 Leads</div>
-                            <span class="text-[10px] text-slate-300">Tracked this week</span>
+                        <div class="flex items-center gap-2">
+                            <button @click="auditStep = 'input'" class="bg-cardborder hover:bg-slate-700 text-slate-300 text-xs font-semibold px-3 py-1.5 rounded-lg transition">Re-Scan</button>
+                            <button @click="auditModalOpen = false" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition">Close Audit</button>
                         </div>
                     </div>
 
-                    <button @click="auditModalOpen = false" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-xl text-xs transition shadow-lg shadow-blue-600/20">
-                        Apply Insights to Weekly Automation
+                    <!-- Channel Navigation Tabs -->
+                    <div class="flex border-b border-cardborder gap-6 text-xs font-semibold">
+                        <button @click="auditActiveChannel = 'instagram'" :class="auditActiveChannel === 'instagram' ? 'border-emerald-400 text-emerald-400' : 'border-transparent text-slate-400 hover:text-slate-200'" class="pb-2.5 border-b-2 transition flex items-center gap-1.5">
+                            <span>📸 Instagram Business</span>
+                            <span class="bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded text-[10px]" x-text="igConnected ? 'Active' : 'Offline'"></span>
+                        </button>
+                        <button @click="auditActiveChannel = 'facebook'" :class="auditActiveChannel === 'facebook' ? 'border-blue-400 text-blue-400' : 'border-transparent text-slate-400 hover:text-slate-200'" class="pb-2.5 border-b-2 transition flex items-center gap-1.5">
+                            <span>👥 Facebook Page</span>
+                            <span class="bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded text-[10px]" x-text="fbConnected ? 'Active' : 'Offline'"></span>
+                        </button>
+                        <button @click="auditActiveChannel = 'youtube'" :class="auditActiveChannel === 'youtube' ? 'border-red-400 text-red-400' : 'border-transparent text-slate-400 hover:text-slate-200'" class="pb-2.5 border-b-2 transition flex items-center gap-1.5">
+                            <span>▶️ YouTube Shorts & TV</span>
+                            <span class="bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded text-[10px]" x-text="ytConnected ? 'Active' : 'Offline'"></span>
+                        </button>
+                        <button @click="auditActiveChannel = 'growth'" :class="auditActiveChannel === 'growth' ? 'border-amber-400 text-amber-400' : 'border-transparent text-slate-400 hover:text-slate-200'" class="pb-2.5 border-b-2 transition flex items-center gap-1.5">
+                            <span>🚀 Master Growth Plan</span>
+                        </button>
+                    </div>
+
+                    <!-- CHANNEL 1: INSTAGRAM AUDIT -->
+                    <div x-show="auditActiveChannel === 'instagram'" class="space-y-4">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold">Follower Growth (30d)</span>
+                                <div class="text-lg font-bold text-white mt-1">+1,240</div>
+                                <span class="text-[10px] text-emerald-400">+18.4% velocity</span>
+                            </div>
+                            <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold">Reel Hook Retention</span>
+                                <div class="text-lg font-bold text-emerald-400 mt-1">72.5%</div>
+                                <span class="text-[10px] text-slate-300">Above hospitality benchmark</span>
+                            </div>
+                            <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold">Save-to-Like Ratio</span>
+                                <div class="text-lg font-bold text-blue-400 mt-1">1:4.2</div>
+                                <span class="text-[10px] text-slate-300">High trip-planning intent</span>
+                            </div>
+                            <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold">DM Inquiry Conversions</span>
+                                <div class="text-lg font-bold text-emerald-400 mt-1">28 Leads</div>
+                                <span class="text-[10px] text-slate-300">Direct booking clicks</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-cardborder/30 border border-cardborder rounded-xl p-5 space-y-3 text-xs">
+                            <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                                <span>🔍 In-Depth Instagram Diagnostic Feedback</span>
+                            </h4>
+                            <p class="text-slate-300 leading-relaxed">
+                                <strong class="text-white" x-text="igAccount"></strong> is currently outperforming regional West Coast tourism benchmarks in visual aesthetic and save rates. Reels featuring ocean sunset time-lapses and cozy fireplace aesthetics maintain a 3-second hook retention of over 72%. However, story sticker engagement drops by 14% on Thursdays.
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                                <div class="bg-darkbg/50 p-3 rounded-lg border border-cardborder">
+                                    <span class="text-emerald-400 font-bold block mb-1">✅ Strengths</span>
+                                    <p class="text-slate-300 text-[11px]">Exceptional color grading consistency, high save-for-later rates on cottage tours, and strong localized geotag placement in Paternoster.</p>
+                                </div>
+                                <div class="bg-darkbg/50 p-3 rounded-lg border border-cardborder">
+                                    <span class="text-amber-400 font-bold block mb-1">⚠️ Areas for Improvement</span>
+                                    <p class="text-slate-300 text-[11px]">Carousel post frequency is too low (currently 1/week). Need more interactive Q&A stickers in Stories on midweek days to boost algorithmic reach.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CHANNEL 2: FACEBOOK AUDIT -->
+                    <div x-show="auditActiveChannel === 'facebook'" class="space-y-4">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold">Page Reach (30d)</span>
+                                <div class="text-lg font-bold text-white mt-1">18,500</div>
+                                <span class="text-[10px] text-blue-400">Organic community reach</span>
+                            </div>
+                            <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold">Link Clicks to Booking</span>
+                                <div class="text-lg font-bold text-emerald-400 mt-1">310 Clicks</div>
+                                <span class="text-[10px] text-slate-300">Strong desktop traffic</span>
+                            </div>
+                            <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold">Video Completion Rate</span>
+                                <div class="text-lg font-bold text-white mt-1">34.1%</div>
+                                <span class="text-[10px] text-slate-300">Long-form walk-throughs</span>
+                            </div>
+                            <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold">Community Sentiment</span>
+                                <div class="text-lg font-bold text-emerald-400 mt-1">98.4% Positive</div>
+                                <span class="text-[10px] text-slate-300">High review score</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-cardborder/30 border border-cardborder rounded-xl p-5 space-y-3 text-xs">
+                            <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                                <span>🔍 In-Depth Facebook Page Diagnostic Feedback</span>
+                            </h4>
+                            <p class="text-slate-300 leading-relaxed">
+                                <strong class="text-white" x-text="fbPageName"></strong> acts as the primary conversion hub for mature travelers and families booking multi-night stays. Long-form video walkthroughs of the cottages achieve 3x higher click-through rates to the reservation page compared to single images.
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                                <div class="bg-darkbg/50 p-3 rounded-lg border border-cardborder">
+                                    <span class="text-emerald-400 font-bold block mb-1">✅ Strengths</span>
+                                    <p class="text-slate-300 text-[11px]">Robust comment-section engagement, high share rates among family travel groups, and excellent response time to Messenger inquiries.</p>
+                                </div>
+                                <div class="bg-darkbg/50 p-3 rounded-lg border border-cardborder">
+                                    <span class="text-amber-400 font-bold block mb-1">⚠️ Areas for Improvement</span>
+                                    <p class="text-slate-300 text-[11px]">Events and weekend special announcements need clearer calls-to-action pinned at the top of the timeline.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CHANNEL 3: YOUTUBE AUDIT -->
+                    <div x-show="auditActiveChannel === 'youtube'" class="space-y-4">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold">Shorts Impressions</span>
+                                <div class="text-lg font-bold text-white mt-1">45,200</div>
+                                <span class="text-[10px] text-emerald-400">High algorithmic push</span>
+                            </div>
+                            <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold">Average View Duration</span>
+                                <div class="text-lg font-bold text-red-400 mt-1">41 Sec</div>
+                                <span class="text-[10px] text-slate-300">Strong retention curve</span>
+                            </div>
+                            <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold">Subscriber Conversion</span>
+                                <div class="text-lg font-bold text-white mt-1">+340 Subs</div>
+                                <span class="text-[10px] text-slate-300">Via Shorts feed</span>
+                            </div>
+                            <div class="bg-cardborder/40 border border-cardborder p-3.5 rounded-xl">
+                                <span class="text-[10px] text-slate-400 uppercase font-semibold">Click-Through Rate</span>
+                                <div class="text-lg font-bold text-emerald-400 mt-1">6.4%</div>
+                                <span class="text-[10px] text-slate-300">Thumbnail optimization working</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-cardborder/30 border border-cardborder rounded-xl p-5 space-y-3 text-xs">
+                            <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                                <span>🔍 In-Depth YouTube Shorts & TV Diagnostic Feedback</span>
+                            </h4>
+                            <p class="text-slate-300 leading-relaxed">
+                                <strong class="text-white" x-text="ytChannelName"></strong> is experiencing rapid organic distribution through YouTube Shorts. Cinematic drone footage of the Paternoster coastline combined with ambient sound design is capturing cold audiences effectively.
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                                <div class="bg-darkbg/50 p-3 rounded-lg border border-cardborder">
+                                    <span class="text-emerald-400 font-bold block mb-1">✅ Strengths</span>
+                                    <p class="text-slate-300 text-[11px]"> Cinematic 4K video quality, exceptional audio mixing, and strong end-screen links leading viewers directly to the booking portal.</p>
+                                </div>
+                                <div class="bg-darkbg/50 p-3 rounded-lg border border-cardborder">
+                                    <span class="text-amber-400 font-bold block mb-1">⚠️ Areas for Improvement</span>
+                                    <p class="text-slate-300 text-[11px]">Publishing cadence is irregular. Establishing a strict 3-shorts-per-week schedule will stabilize algorithmic momentum.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CHANNEL 4: MASTER GROWTH PLAN -->
+                    <div x-show="auditActiveChannel === 'growth'" class="space-y-4">
+                        <div class="bg-gradient-to-r from-blue-950/40 via-cardbg to-emerald-950/40 border border-blue-500/30 rounded-xl p-5 space-y-4 text-xs">
+                            <div class="flex items-center justify-between border-b border-cardborder pb-3">
+                                <h4 class="font-extrabold text-sm text-white flex items-center gap-2">
+                                    <span>🚀 90-Day Omnichannel Growth Roadmap for <span class="text-emerald-400" x-text="companyName"></span></span>
+                                </h4>
+                                <span class="bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full font-bold text-[10px]">Actionable Plan</span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3 bg-darkbg/50 p-3 rounded-lg border border-cardborder">
+                                    <div class="w-6 h-6 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center shrink-0 text-xs">1</div>
+                                    <div class="space-y-1">
+                                        <h5 class="font-bold text-white">Phase 1 (Days 1–30): Hook Standardization & Content Bank Expansion</h5>
+                                        <p class="text-slate-300 text-[11px]">Standardize the first 2 seconds of all Instagram and YouTube Reels to feature high-contrast coastal motion or sound design. Populate the Smart Content Bank with 20 evergreen West Coast sunset clips.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-3 bg-darkbg/50 p-3 rounded-lg border border-cardborder">
+                                    <div class="w-6 h-6 rounded-full bg-emerald-600 text-slate-950 font-bold flex items-center justify-center shrink-0 text-xs">2</div>
+                                    <div class="space-y-1">
+                                        <h5 class="font-bold text-white">Phase 2 (Days 31–60): Cross-Platform Syndication & WhatsApp Lead Magnet</h5>
+                                        <p class="text-slate-300 text-[11px]">Enable simultaneous publishing across Instagram, Facebook, and YouTube via the Co-Pilot. Deploy the WhatsApp assistant widget to capture direct inquiries instantly from mobile viewers.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-3 bg-darkbg/50 p-3 rounded-lg border border-cardborder">
+                                    <div class="w-6 h-6 rounded-full bg-purple-600 text-white font-bold flex items-center justify-center shrink-0 text-xs">3</div>
+                                    <div class="space-y-1">
+                                        <h5 class="font-bold text-white">Phase 3 (Days 61–90): Community Co-Creation & Seasonal Campaigns</h5>
+                                        <p class="text-slate-300 text-[11px]">Launch user-generated content prompts encouraging cottage guests to share their morning coffee views. Roll out 'Spring West Coast Getaway' promotional reels targeting Cape Town weekend travelers.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button @click="auditModalOpen = false" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl text-xs transition shadow-lg shadow-blue-600/20">
+                        Apply Insights & Return to Dashboard
                     </button>
                 </div>
             </template>
