@@ -94,20 +94,15 @@
           // Editable Caption & Dynamic Tags
           captionText: 'As the sun dips below the Atlantic horizon, our guests are treated to front-row seats. Who are you bringing on your next escape? 🌅✨',
           
-          // Smart Content Bank Items (with delete support)
+          // Smart Content Bank Items
           contentBankItems: [
               { id: 1, name: 'Winter Fireplace Evening', type: 'image', url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=300', caption: 'Crackling fires and quiet evenings.' },
               { id: 2, name: 'Patio Morning Coffee', type: 'image', url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=300', caption: 'Morning light and fresh ocean air.' },
               { id: 3, name: 'Sunset Horizon View', type: 'image', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300', caption: 'As the sun dips below the Atlantic horizon.' }
           ],
 
-          // Scheduled Posts for Calendar View (appear as bright highlighted blocks)
-          scheduledPosts: [
-              { id: 1, date: '2026-09-18', time: '17:00', title: 'Sunset Horizon View', platform: 'Instagram (Reel)', status: 'Queued' },
-              { id: 2, date: '2026-09-19', time: '09:00', title: 'Patio Morning Coffee', platform: 'Facebook (Feed)', status: 'Scheduled' },
-              { id: 3, date: '2026-09-21', time: '18:30', title: 'Winter Fireplace Evening', platform: 'Instagram (Feed)', status: 'Scheduled' },
-              { id: 4, date: '2026-09-24', time: '16:00', title: 'Coastal Walkway Drone Shot', platform: 'Instagram (Reel)', status: 'Scheduled' }
-          ],
+          // Scheduled Posts (Starts completely empty as requested)
+          scheduledPosts: [],
           
           handleFile(file) {
               if (!file) return;
@@ -171,7 +166,7 @@
                   status: 'Queued'
               });
               this.publishedToast = true;
-              setTimeout(() => this.publishedToast = false, 3500);
+              setTimeout(() => this.publishedToast = false, 4000);
           },
 
           saveAccounts() {
@@ -438,7 +433,7 @@
             </div>
         </div>
 
-        <!-- TAB 2: CALENDAR & PLANNING VIEW (Bright Blocks & Removable) -->
+        <!-- TAB 2: CALENDAR & PLANNING VIEW (Clean, No Pre-Built Posts) -->
         <div x-show="currentTab === 'calendar'" class="glass-panel rounded-2xl p-6 flex flex-col gap-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-cardborder pb-4">
                 <div>
@@ -456,6 +451,14 @@
             <!-- Scheduled Posts Queue as BRIGHT HIGHLIGHTED BLOCKS with Delete / Remove button -->
             <div class="space-y-3">
                 <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Active Schedule Queue</h3>
+                
+                <!-- Empty State if no posts scheduled yet -->
+                <template x-if="scheduledPosts.length === 0">
+                    <div class="bg-cardborder/20 border border-cardborder rounded-xl p-8 text-center text-xs text-slate-400">
+                        No posts scheduled yet. Use <strong class="text-slate-200">Today's Post & Studio</strong> to create and schedule your first post.
+                    </div>
+                </template>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <template x-for="post in scheduledPosts" :key="post.id">
                         <div class="bg-gradient-to-br from-blue-900/40 via-cardbg to-emerald-950/30 border-2 border-blue-500/60 rounded-xl p-4 flex flex-col justify-between gap-3 relative shadow-xl shadow-blue-500/10 group hover:border-emerald-400 transition">
@@ -478,7 +481,7 @@
                 </div>
             </div>
 
-            <!-- Visual Monthly Calendar Grid with Bright Blocks -->
+            <!-- Visual Monthly Calendar Grid with Dynamic Bright Blocks -->
             <div class="mt-4 pt-4 border-t border-cardborder">
                 <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">September 2026 Visual Grid</h3>
                 <div class="grid grid-cols-7 gap-2 text-center text-xs">
@@ -493,31 +496,19 @@
 
                     <!-- Days 1-30 -->
                     <template x-for="day in 30">
-                        <div class="bg-cardborder/20 border border-cardborder/50 rounded-lg p-2 min-h-[75px] flex flex-col justify-between text-left relative"
-                             :class="day === 18 || day === 19 || day === 21 || day === 24 ? 'border-blue-500 bg-blue-600/15 ring-1 ring-blue-500/40 shadow-lg' : ''">
-                            <span class="text-[11px] font-bold" :class="day === 18 || day === 19 || day === 21 || day === 24 ? 'text-blue-300' : 'text-slate-400'" x-text="day"></span>
+                        <div class="bg-cardborder/20 border border-cardborder/50 rounded-lg p-2 min-h-[85px] flex flex-col justify-between text-left relative"
+                             :class="scheduledPosts.some(p => p.date === ('2026-09-' + (day < 10 ? '0' + day : day))) ? 'border-blue-500 bg-blue-600/15 ring-1 ring-blue-500/40 shadow-lg' : ''">
+                            <span class="text-[11px] font-bold" :class="scheduledPosts.some(p => p.date === ('2026-09-' + (day < 10 ? '0' + day : day))) ? 'text-blue-300' : 'text-slate-400'" x-text="day"></span>
                             
-                            <!-- Bright Block Indicators on scheduled days -->
-                            <template x-if="day === 18">
-                                <div class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-[9px] font-bold p-1 rounded shadow truncate">
-                                    Sunset Reel (17:00)
-                                </div>
-                            </template>
-                            <template x-if="day === 19">
-                                <div class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-[9px] font-bold p-1 rounded shadow truncate">
-                                    Coffee Post (09:00)
-                                </div>
-                            </template>
-                            <template x-if="day === 21">
-                                <div class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-[9px] font-bold p-1 rounded shadow truncate">
-                                    Fireplace (18:30)
-                                </div>
-                            </template>
-                            <template x-if="day === 24">
-                                <div class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-[9px] font-bold p-1 rounded shadow truncate">
-                                    Drone Reel (16:00)
-                                </div>
-                            </template>
+                            <!-- Dynamic Bright Block Indicators for Scheduled Posts on this Day -->
+                            <div class="space-y-1 overflow-y-auto max-h-[55px]">
+                                <template x-for="post in scheduledPosts.filter(p => p.date === ('2026-09-' + (day < 10 ? '0' + day : day)))" :key="post.id">
+                                    <div class="bg-gradient-to-r from-blue-600 to-emerald-600 text-white text-[9px] font-bold p-1 rounded shadow truncate flex justify-between items-center">
+                                        <span x-text="post.title + ' (' + post.time + ')'"></span>
+                                        <button @click.stop="scheduledPosts = scheduledPosts.filter(p => p.id !== post.id)" class="text-white hover:text-red-200 ml-1 font-bold">&times;</button>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
                     </template>
                 </div>
@@ -774,13 +765,13 @@
         </div>
     </div>
 
-    <!-- Success Toasts -->
-    <div x-show="publishedToast" x-transition class="fixed bottom-6 right-6 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        Post confirmed and scheduled successfully!
+    <!-- Success Popup / Toast with Exact Requested Text -->
+    <div x-show="publishedToast" x-transition class="fixed bottom-6 right-6 bg-emerald-600 text-white px-5 py-3.5 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2 border border-emerald-400/40">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span>Posted (view your schedule to see future posts)</span>
     </div>
 
-    <div x-show="accountConnectedToast" x-transition class="fixed bottom-6 right-6 bg-blue-600 text-white px-5 py-3 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2">
+    <div x-show="accountConnectedToast" x-transition class="fixed bottom-6 right-6 bg-blue-600 text-white px-5 py-3.5 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
         Company and social accounts updated successfully!
     </div>
