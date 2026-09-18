@@ -88,6 +88,9 @@
         <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-pink-500/10 text-pink-400 border border-pink-500/30">
           <i class="fa-brands fa-instagram"></i> <span class="hidden sm:inline">Instagram</span>
         </div>
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-600/10 text-blue-400 border border-blue-500/30">
+          <i class="fa-brands fa-facebook"></i> <span class="hidden sm:inline">Facebook</span>
+        </div>
       </div>
     </div>
   </header>
@@ -216,7 +219,7 @@
             <!-- AI Vision Analysis Button -->
             <div class="pt-2">
               <button onclick="runAIVisionScan()" id="btn-ai-scan" type="button" class="w-full py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white text-xs font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> AI Scan Asset for Titles, Captions & Tags
+                <i class="fa-solid fa-wand-magic-sparkles"></i> AI Scan Asset for Titles, Captions & Real-Time Tags
               </button>
             </div>
 
@@ -234,8 +237,8 @@
                   <i class="fa-solid fa-brain text-sm"></i>
                 </div>
                 <div>
-                  <h3 class="text-xs font-bold uppercase tracking-wider text-white">AI Media Inspector Results</h3>
-                  <p class="text-[10px] text-indigo-300">Visual composition & thematic content detection</p>
+                  <h3 class="text-xs font-bold uppercase tracking-wider text-white">AI Media Inspector & Trend Engine</h3>
+                  <p class="text-[10px] text-indigo-300">Composition analysis, viral hooks & real-time trending tags</p>
                 </div>
               </div>
               <span id="ai-status-badge" class="text-[10px] bg-slate-800 text-slate-400 border border-slate-700 px-2 py-0.5 rounded">Ready for Scan</span>
@@ -243,10 +246,10 @@
 
             <div id="ai-scanning-state" class="hidden py-8 flex flex-col items-center justify-center text-center space-y-2">
               <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400"></i>
-              <p class="text-xs font-medium text-slate-300">Analyzing focal subjects, color grade, and video hooks...</p>
+              <p class="text-xs font-medium text-slate-300">Scanning visual frames & fetching real-time platform trends...</p>
             </div>
 
-            <div id="ai-output-content" class="space-y-3">
+            <div id="ai-output-content" class="space-y-4">
               <div>
                 <label class="block text-[11px] font-semibold text-slate-400 mb-1">Recommended Video / Post Titles</label>
                 <div class="space-y-1.5" id="suggested-titles">
@@ -258,26 +261,41 @@
               </div>
 
               <div>
-                <label class="block text-[11px] font-semibold text-slate-400 mb-1">Generated Caption & Hook</label>
-                <p id="suggested-caption" class="text-xs text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800 leading-relaxed">
-                  Inside the edit suite: breakdown of key visual hooks, color grading workflow, and retention pacing for commercial brand videos.
-                </p>
-              </div>
+                <label class="block text-[11px] font-semibold text-slate-400 mb-1">High-Converting AI Caption & Hook</label>
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                  <p id="suggested-caption" class="text-xs text-slate-200 leading-relaxed whitespace-pre-line">🎬 Stop losing viewers in the first 3 seconds! Here is the exact retention editing framework we use for commercial brand videos:
 
-              <div>
-                <label class="block text-[11px] font-semibold text-slate-400 mb-1">AI Smart Hashtags & SEO Tags</label>
-                <div id="suggested-tags" class="flex flex-wrap gap-1.5">
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md">#filmmaking</span>
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md">#videography</span>
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md">#editingtips</span>
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md">#capcut</span>
-                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md">#cinematography</span>
+1. Dynamic Visual Hook (0:00 - 0:02)
+2. Color Grading Pacing & Sound Design
+3. High-Impact Call-to-Action
+
+Drop a comment below if you want the project breakdown! 👇</p>
                 </div>
               </div>
 
-              <div class="pt-2 flex justify-end">
-                <button onclick="applyAISuggestions()" type="button" class="px-3 py-1.5 bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1.5">
-                  <i class="fa-solid fa-check"></i> Populate Form Meta
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <label class="block text-[11px] font-semibold text-slate-400">Real-Time Trending Tags (Click to Select / Refresh)</label>
+                  <div class="flex items-center gap-1 text-[10px]">
+                    <button onclick="fetchLiveTrendingTags('viral')" type="button" class="px-2 py-0.5 bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 rounded border border-indigo-500/30 transition">Viral 2026</button>
+                    <button onclick="fetchLiveTrendingTags('filmmaking')" type="button" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition">Video Production</button>
+                    <button onclick="fetchLiveTrendingTags('tech')" type="button" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition">AI & Tech</button>
+                  </div>
+                </div>
+                <div id="suggested-tags" class="flex flex-wrap gap-1.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800 min-h-[42px]">
+                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> #viralreels2026</span>
+                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> #fbreels</span>
+                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> #trendingreels2026</span>
+                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> #youtubeshorts</span>
+                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> #filmmakingtok</span>
+                  <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> #contentcreator</span>
+                </div>
+              </div>
+
+              <div class="pt-2 flex justify-between items-center">
+                <span class="text-[10px] text-slate-400"><i class="fa-solid fa-bolt text-amber-400 mr-1"></i> Live Platform Velocity: <strong class="text-emerald-400">+14.2k Posts/hr</strong></span>
+                <button onclick="applyAISuggestions()" type="button" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1.5 shadow">
+                  <i class="fa-solid fa-check"></i> Apply Meta To Form
                 </button>
               </div>
             </div>
@@ -294,21 +312,27 @@
 
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">Caption & Description</label>
-              <textarea id="input-caption" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500 transition">Inside the edit suite: breakdown of key visual hooks, color grading workflow, and retention pacing for commercial brand videos.</textarea>
+              <textarea id="input-caption" rows="4" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500 transition leading-relaxed">🎬 Stop losing viewers in the first 3 seconds! Here is the exact retention editing framework we use for commercial brand videos:
+
+1. Dynamic Visual Hook (0:00 - 0:02)
+2. Color Grading Pacing & Sound Design
+3. High-Impact Call-to-Action
+
+Drop a comment below if you want the project breakdown! 👇</textarea>
             </div>
 
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">Tags (Comma Separated)</label>
-              <input id="input-tags" type="text" value="filmmaking, videography, editingtips, capcut, cinematography" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition">
+              <input id="input-tags" type="text" value="viralreels2026, fbreels, trendingreels2026, youtubeshorts, filmmakingtok, contentcreator" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition">
             </div>
 
             <!-- Target Channels Selection -->
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-2">Publishing Destinations</label>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 
                 <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-red-500/50 transition">
-                  <div class="flex items-center gap-2.5 text-xs text-slate-200">
+                  <div class="flex items-center gap-2 text-xs text-slate-200">
                     <input type="checkbox" id="chk-yt-long" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
                     <i class="fa-brands fa-youtube text-red-500 text-base"></i>
                     <div>
@@ -316,11 +340,11 @@
                       <span class="text-[10px] text-slate-400">16:9 Landscape Video</span>
                     </div>
                   </div>
-                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Ready</span>
+                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">Ready</span>
                 </label>
 
                 <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-red-500/50 transition">
-                  <div class="flex items-center gap-2.5 text-xs text-slate-200">
+                  <div class="flex items-center gap-2 text-xs text-slate-200">
                     <input type="checkbox" id="chk-yt-shorts" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
                     <i class="fa-brands fa-youtube text-red-500 text-base"></i>
                     <div>
@@ -328,11 +352,11 @@
                       <span class="text-[10px] text-slate-400">9:16 Vertical Short</span>
                     </div>
                   </div>
-                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Ready</span>
+                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">Ready</span>
                 </label>
 
                 <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-cyan-500/50 transition">
-                  <div class="flex items-center gap-2.5 text-xs text-slate-200">
+                  <div class="flex items-center gap-2 text-xs text-slate-200">
                     <input type="checkbox" id="chk-tt" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
                     <i class="fa-brands fa-tiktok text-cyan-400 text-base"></i>
                     <div>
@@ -340,11 +364,11 @@
                       <span class="text-[10px] text-slate-400">9:16 Vertical Video</span>
                     </div>
                   </div>
-                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Ready</span>
+                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">Ready</span>
                 </label>
 
                 <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-pink-500/50 transition">
-                  <div class="flex items-center gap-2.5 text-xs text-slate-200">
+                  <div class="flex items-center gap-2 text-xs text-slate-200">
                     <input type="checkbox" id="chk-ig" checked class="rounded border-slate-700 text-indigo-600 bg-slate-900 focus:ring-0">
                     <i class="fa-brands fa-instagram text-pink-500 text-base"></i>
                     <div>
@@ -352,7 +376,32 @@
                       <span class="text-[10px] text-slate-400">9:16 / 1:1 Feed Sync</span>
                     </div>
                   </div>
-                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Ready</span>
+                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">Ready</span>
+                </label>
+
+                <!-- Facebook Options -->
+                <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-blue-500/50 transition">
+                  <div class="flex items-center gap-2 text-xs text-slate-200">
+                    <input type="checkbox" id="chk-fb-feed" checked class="rounded border-slate-700 text-blue-600 bg-slate-900 focus:ring-0">
+                    <i class="fa-brands fa-facebook text-blue-500 text-base"></i>
+                    <div>
+                      <span class="font-semibold block leading-tight">Facebook Page</span>
+                      <span class="text-[10px] text-slate-400">Page Post & Video</span>
+                    </div>
+                  </div>
+                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">Ready</span>
+                </label>
+
+                <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-blue-500/50 transition">
+                  <div class="flex items-center gap-2 text-xs text-slate-200">
+                    <input type="checkbox" id="chk-fb-reels" checked class="rounded border-slate-700 text-blue-600 bg-slate-900 focus:ring-0">
+                    <i class="fa-brands fa-facebook text-blue-500 text-base"></i>
+                    <div>
+                      <span class="font-semibold block leading-tight">Facebook Reels</span>
+                      <span class="text-[10px] text-slate-400">9:16 Vertical Reel</span>
+                    </div>
+                  </div>
+                  <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">Ready</span>
                 </label>
 
               </div>
@@ -377,7 +426,7 @@
                   <i class="fa-regular fa-calendar-plus text-indigo-400"></i> Schedule Post
                 </button>
 
-                <button onclick="triggerPublish()" type="button" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-indigo-500/25 flex items-center gap-2">
+                <button onclick="triggerPublish()" type="button" class="px-6 py-3 bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-indigo-500/25 flex items-center gap-2">
                   <i class="fa-solid fa-paper-plane"></i> Publish Immediately
                 </button>
               </div>
@@ -414,7 +463,7 @@
         <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800">
           <div class="text-xs text-slate-400 font-medium">Total Multi-Network Views</div>
           <div class="text-3xl font-extrabold text-amber-400 mt-1">142.5K</div>
-          <div class="text-[11px] text-amber-500 mt-1">Across 4 Active Channels</div>
+          <div class="text-[11px] text-amber-500 mt-1">Across 5 Active Channels</div>
         </div>
       </div>
 
@@ -431,7 +480,7 @@
     <!-- TAB 3: PORTFOLIO -->
     <div id="view-portfolio" class="hidden space-y-6">
       <h3 class="text-base font-bold text-white">Latsky Multimedia Vault</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-4 space-y-2">
           <div class="h-40 bg-slate-950 rounded-xl flex items-center justify-center text-red-400 font-bold text-xs border border-slate-800">
             <i class="fa-brands fa-youtube text-2xl mr-2"></i> 16:9 YouTube Master
@@ -449,6 +498,12 @@
             <i class="fa-brands fa-instagram text-2xl mr-2"></i> 1:1 Square Feed Edit
           </div>
           <h4 class="text-xs font-bold text-white">Social Promo Highlight</h4>
+        </div>
+        <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-4 space-y-2">
+          <div class="h-40 bg-slate-950 rounded-xl flex items-center justify-center text-blue-400 font-bold text-xs border border-slate-800">
+            <i class="fa-brands fa-facebook text-2xl mr-2"></i> Facebook Reel & Page
+          </div>
+          <h4 class="text-xs font-bold text-white">Commercial Video Campaign</h4>
         </div>
       </div>
     </div>
@@ -488,6 +543,34 @@
   <script>
     // SCHEDULED POSTS STATE MANAGEMENT
     let scheduledQueue = [];
+
+    // REAL-TIME TRENDING TAG DATASETS
+    const trendingDatabase = {
+      viral: ["#viralreels2026", "#fbreels", "#trendingreels2026", "#youtubeshorts", "#filmmakingtok", "#contentcreator", "#fyp2026", "#explorepage2026"],
+      filmmaking: ["#filmmaking", "#videography", "#cinematography", "#editingtips", "#capcut", "#behindthescenes", "#colorgrading", "#shortfilm"],
+      tech: ["#aivideo", "#techtrends2026", "#contentcreation", "#videoediting", "#digitalcreator", "#aiproduction"],
+      business: ["#brandfilm", "#commercialvideography", "#contentstrategy", "#videomarketing", "#entrepreneurship"]
+    };
+
+    function fetchLiveTrendingTags(category = 'viral') {
+      const tags = trendingDatabase[category] || trendingDatabase.viral;
+      const container = document.getElementById('suggested-tags');
+      container.innerHTML = tags.map(tag => `
+        <span onclick="appendTag('${tag}')" class="cursor-pointer text-[10px] bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/30 border border-indigo-500/30 px-2 py-0.5 rounded-md transition flex items-center gap-1">
+          <i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> ${tag}
+        </span>
+      `).join('');
+    }
+
+    function appendTag(tagClean) {
+      const tag = tagClean.replace('#', '');
+      const input = document.getElementById('input-tags');
+      const currentTags = input.value.split(',').map(t => t.trim()).filter(t => t.length > 0);
+      if (!currentTags.includes(tag)) {
+        currentTags.push(tag);
+        input.value = currentTags.join(', ');
+      }
+    }
 
     // NAVIGATION SWITCHER
     function switchTab(tabName) {
@@ -530,7 +613,6 @@
     const mediaImg = document.getElementById('media-img');
     const mediaVideo = document.getElementById('media-video');
 
-    // Drag and Drop Event Listeners
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
       canvasWrapper.addEventListener(eventName, (e) => {
         e.preventDefault();
@@ -553,9 +635,7 @@
     canvasWrapper.addEventListener('drop', (e) => {
       const dt = e.dataTransfer;
       const files = dt.files;
-      if (files && files.length > 0) {
-        processFile(files[0]);
-      }
+      if (files && files.length > 0) processFile(files[0]);
     });
 
     function handleFileSelect(e) {
@@ -662,7 +742,7 @@
       scanState.classList.remove('hidden');
       content.classList.add('hidden');
       badge.className = "text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded animate-pulse";
-      badge.innerText = "Analyzing Media...";
+      badge.innerText = "Analyzing Media & Live Trends...";
 
       setTimeout(() => {
         scanner.classList.add('hidden');
@@ -676,11 +756,11 @@
           {
             titles: [
               "3 Editing Secrets That Quadrupled My Video Retention",
-              "How to Film Cinematic Commercials on a Lean Budget",
-              "Behind the Edit: High-Impact Social Hook Strategy"
+              "How We Edit High-Converting Brand Commercials",
+              "The 3-Second Retention Hook Strategy for Social Video"
             ],
-            caption: "Inside the edit suite: breakdown of key visual hooks, color grading workflow, and retention pacing for commercial brand films.",
-            tags: ["#filmmaking", "#videography", "#editingtips", "#capcut", "#cinematography", "#contentcreator"]
+            caption: "🎬 Stop losing viewers in the first 3 seconds! Here is the exact retention editing framework we use for commercial brand videos:\n\n1. Dynamic Visual Hook (0:00 - 0:02)\n2. Color Grading Pacing & Sound Design\n3. High-Impact Call-to-Action\n\nDrop a comment below if you want the project breakdown! 👇",
+            tags: ["#viralreels2026", "#fbreels", "#trendingreels2026", "#youtubeshorts", "#filmmakingtok", "#contentcreator"]
           }
         ];
 
@@ -696,10 +776,12 @@
 
         document.getElementById('suggested-caption').innerText = selected.caption;
         document.getElementById('suggested-tags').innerHTML = selected.tags.map(tag => `
-          <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-md">${tag}</span>
+          <span onclick="appendTag('${tag}')" class="cursor-pointer text-[10px] bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/30 border border-indigo-500/30 px-2 py-0.5 rounded-md transition flex items-center gap-1">
+            <i class="fa-solid fa-fire text-amber-400 text-[9px]"></i> ${tag}
+          </span>
         `).join('');
 
-      }, 1600);
+      }, 1400);
     }
 
     function applyTitle(titleText) {
@@ -709,11 +791,11 @@
     function applyAISuggestions() {
       const captionText = document.getElementById('suggested-caption').innerText;
       const tagElements = document.querySelectorAll('#suggested-tags span');
-      const tagList = Array.from(tagElements).map(el => el.innerText.replace('#', '')).join(', ');
+      const tagList = Array.from(tagElements).map(el => el.innerText.trim().replace('#', '')).join(', ');
 
       document.getElementById('input-caption').value = captionText;
       document.getElementById('input-tags').value = tagList;
-      alert("AI suggestions applied to publishing form!");
+      alert("High-converting AI caption & real-time tags populated into publishing form!");
     }
 
     function setRecommendedTime() {
@@ -731,6 +813,8 @@
       if (document.getElementById('chk-yt-shorts').checked) selected.push('YouTube Shorts');
       if (document.getElementById('chk-tt').checked) selected.push('TikTok');
       if (document.getElementById('chk-ig').checked) selected.push('Instagram Reels');
+      if (document.getElementById('chk-fb-feed').checked) selected.push('Facebook Page Feed');
+      if (document.getElementById('chk-fb-reels').checked) selected.push('Facebook Reels');
       return selected;
     }
 
@@ -835,6 +919,15 @@
               data: [100, 88, 79, 73, 68, 64, 59],
               borderColor: '#ef4444',
               backgroundColor: 'rgba(239, 68, 68, 0.05)',
+              fill: true,
+              tension: 0.35,
+              borderWidth: 2
+            },
+            {
+              label: 'Facebook Reels & Feed (%)',
+              data: [100, 81, 66, 51, 38, 22, 12],
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.05)',
               fill: true,
               tension: 0.35,
               borderWidth: 2
